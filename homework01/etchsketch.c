@@ -1,6 +1,6 @@
-int main(string argc[]){
+int main(char argc[]){
 
-printf("Hello World!");
+
 
 
 return 0;
