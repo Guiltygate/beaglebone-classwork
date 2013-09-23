@@ -12,7 +12,7 @@ Calling instructions:
 
 General: ./tempAlert <HexAddress1> <HexAddress2> <HexTempHi> <HexTempLow> <AlertGPIO> <DecimalAddress1> <DecimalAddress2>
 
-I personally use ./tempAlert 48 49 20 1c 14 72 73
+I personally use ./tempAlert 72 73 1f 1c 14 48 49
 
 Apologies to the user for having you enter both the hex and decimal addresses-
 I'm in a bit of a time crunch with 3 projects due, and the commands weren't playing
