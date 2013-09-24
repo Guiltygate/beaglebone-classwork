@@ -139,7 +139,6 @@ int main(int argc, char* argv[]){
 	char fieldArray[size][size];
 	int x = 0; int y = 0;
 
-	system("echo cape-bone-iio > /sys/devices/bone_capemgr.*/slots");
 
 //i2c Setup-------------------------------------------------------
 
