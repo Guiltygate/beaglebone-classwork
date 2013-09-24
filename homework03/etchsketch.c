@@ -13,9 +13,9 @@
 /* Written by Eric Ames for ECE497. (Much of the i2c work was adapted from others.)
 Calling instructions: the first argument is taken as the board size, the second an optional decimal register (for later use, can be ignored now). 3rd and 4th are both the AIN # to call for the joystick. Final argument is the gpio pin to be read for the joystick toggle.
 
-General: ./etchsketch <tempAddr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio>
+General: ./etchsketch <tempAddr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio> <btn_1> <btn_2>
 
-I personally use ./etchsketch 72 6 4 15
+I personally use ./etchsketch 72 6 4 15 112 115
 
 THERE IS NO ERROR HANDLING. If you pass in bad arguments, bad things will happen.
 
@@ -23,7 +23,7 @@ NOTE: This program would not be possible without the use of gpio-utils.c and its
 */
 
 static __u16 initial1_bmp[]=
-	{0b0000000000000000, 0b0000000011111111, 0b0000000011111111,
+	{0b0000000011111111, 0b0000000011111111, 0b0000000011111111,
 	 0b0000000011111111, 0b0000000011111111, 0b0000000011111111,
 	 0b0000000011111111, 0b0000000011111111};
 
@@ -36,6 +36,31 @@ static __u16 initial3_bmp[]=
 	{0b0000000000000000, 0b0000000000000000, 0b0000000000000000,
 	 0b0000000000000000, 0b0000000000000000, 0b0000000000000000,
 	 0b0000000000000000, 0b0000000000000000};
+
+static __u16 gif0[]=
+	{0xf0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+static __u16 gif1[]=
+	{0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+static __u16 gif2[]=
+	{0xf0ff, 0x01, 0x01, 0x01, 0x0, 0x0, 0x0, 0x0};
+static __u16 gif3[]=
+	{0xffff, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
+static __u16 gif4[]=
+	{0xffff, 0x0101, 0x0101, 0x0101, 0x01, 0x01, 0x01, 0x1f};
+static __u16 gif5[]=
+	{0xffff, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0xff};
+static __u16 gif6[]=
+	{0xffff, 0x0101, 0x0181, 0x0181, 0x0181, 0x0181, 0x0181, 0x01ff};
+static __u16 gif7[]=
+	{0xffff, 0x0101, 0x81f9, 0x8181, 0x8181, 0x8181, 0x8181, 0xffff};
+static __u16 gif8[]=
+	{0xffff, 0x0101, 0xf9fd, 0x8185, 0x8185, 0x8185, 0x8181, 0xffff};
+static __u16 gif9[]=
+	{0xffff, 0x0101, 0xfdfd, 0x8585, 0x8585, 0x859d, 0x8181, 0xffff};
+static __u16 gif10[]=
+	{0xffff, 0x0101, 0xfdfd, 0x8585, 0x8585, 0x9dbd, 0x8181, 0xffff};
+static __u16_gif11[]=
+	{0xffff, 0x0101, 0xfdfd, 0x8585, 0x85a5, 0x9dbd, 0x8181, 0xffff};
 
 static int check_funcs(int file) {
 	unsigned long funcs;
@@ -150,15 +175,22 @@ int main(int argc, char* argv[]){
 	unsigned int ainA = atoi(argv[2]);
 	unsigned int ainB = atoi(argv[3]);
 	unsigned int toggle = atoi(argv[4]);
+	unsigned int btn1 = atoi(argv[5]);
+	unsigned int btn2 = atoi(argv[6]);
 
 	//export select gpios
 	gpio_export(toggle);	
 	gpio_set_dir(toggle, "in");
+	gpio_export(btn1);	
+	gpio_set_dir(btn1, "in");
+	gpio_export(btn2);	
+	gpio_set_dir(btn2, "in");
 
 
 	//These variables are used to check for position and clearing the board.
 	int x_pos, y_pos;
 	int sel = 1;
+	int value1, value2;
 
 //CHANGE FOR AIN USE, NOT GPIOs
 /*	1) Convert toggles to AIN - DONE
@@ -167,10 +199,11 @@ int main(int argc, char* argv[]){
 */
 	int i = 0;
 	while(1){
+		gpio_get_value(btn1, &value1);
+		gpio_get_value(btn2, &value2);
 		//Left & Right
+/*		ain_get_value(ainA, &x_pos);
 		ain_get_value(ainA, &x_pos);
-		ain_get_value(ainA, &x_pos);
-		fflush(stdout);
 		if (x_pos>1700 && x > 0){
 			--x;
 			redraw(size, fieldArray, x, y, file);
@@ -190,16 +223,45 @@ int main(int argc, char* argv[]){
 			++y;
 			redraw(size, fieldArray, x, y, file);
 		}
+*/
+		if (value1 == 1 && value2 == 0 && x > 0){
+			--x;
+			redraw(size, fieldArray, x, y, file);
+		}
+		if (value1 == 0 && value2 == 1 && x < size-1){
+			++x;
+			redraw(size, fieldArray, x, y, file);
+		}
+		if (value1 == 1 && value2 == 1 && y < size-1){
+			++y;
+			redraw(size, fieldArray, x, y, file);
+		}
+		if (value1 == 1 && sel == 0 && y > 0){
+			--y;
+			redraw(size, fieldArray, x, y, file);
+			sel == 1;
+		}
+		if (value1 == 1 && value2 == 1 && sel == 0){
+			initialdraw(size, &fieldArray[0][0], file);
+			write_block(file, gif0);sleep(1);write_block(file, gif1);sleep(1);
+			write_block(file, gif2);sleep(1);write_block(file, gif3);sleep(1);
+			write_block(file, gif4);sleep(1);write_block(file, gif5);sleep(1);
+			write_block(file, gif6);sleep(1);write_block(file, gif7);sleep(1);
+			write_block(file, gif8);sleep(1);write_block(file, gif9);sleep(1);
+			write_block(file, gif10);sleep(1);
+		}
+
 
 		//Clear method 1 //CHANGE
 		gpio_get_value(toggle, &sel);
-		if (sel == 0 && x < size-1){
+		if (sel == 0 && value1 == 0 && value2 == 0){
 			initialdraw(size, &fieldArray[0][0], file);
 			sel == 1;
 		}
 	printf("Running...\n");
-	printf("X pos: %d\n", x_pos);
-	printf("Y pos: %d\n", y_pos);
+	//printf("X pos: %d\n", x_pos);
+	//printf("Y pos: %d\n", y_pos);
+
 	sleep(1);
 
 	}
