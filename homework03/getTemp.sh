@@ -1,8 +1,10 @@
 #!/bin/sh
+#Call: ./getTemp Address1 Address2
+#Sample: ./getTemp 48 49
 
 if [ $# -eq 0 ]
 then
-	echo "No gpio pins supplied; exiting."
+	echo "No i2c addresses supplied; exiting."
 	exit
 fi	
 

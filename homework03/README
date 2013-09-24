@@ -1,0 +1,34 @@
+Readme for HOMEWORK03
+
+Notes of import:
+	1) Makefile currently doesn't work- not sure how to cross-compile with it, 		otherwise it would be a piece of cake.
+
+	2) I've included pre-cross-compiled files for convenience, given #1.
+
+	3) I do not as of writing this have a temp sensor interfaced with my 		etchsketch program. The reason for this is that my "extra" was the joystick- 		which, due to the ADC bugs present on the Bone, will not work (although my 		software interface is just fine!).
+
+----------------------------------------------------------------------------------
+For the first problem, regarding reading the temp sensors, see getTemp.sh. Just a little bash file that takes two hex addresses (without the 0x!) and reads from them. It assumes i2c, bus 1, and daddress 0, so it's not very general.
+
+./getTemp.sh <Hex_Address_1> <Hex_Address_2>
+
+my args: 48 49
+
+
+----------------------------------------------------------------------------------
+Second problem uses the bash script tempAlertSetup.sh and the c-file tempAlert.c. Messy, but works- as of writing, it takes 7 arguments (if I have time I'll prune it down to 5).
+
+./tempAlert <Dec_Address1> <Dec_Address2> <HexTempHi> <HexTempLow> <AlertGPIO> <Hex_Address1> <Hex_Address2>
+
+my args: 72 73 1f 1c 14 48 49
+
+
+----------------------------------------------------------------------------------
+Third is the LED-etchsketch interface. Due to the joystick issues, I was forced to revert to buttons- although you can still use the joystick to toggle clear.
+
+./etchsketch <Dec_Addr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio> 
+<left_gpio> <right> <up> <down>
+
+my args: 72 6 4 15
+
+Note that the decimal_address_1 is, as of writing this, not used. It's for a possible temperature interface.

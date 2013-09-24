@@ -154,6 +154,41 @@ int gpio_get_value(unsigned int gpio, unsigned int *value)
 	return 0;
 }
 
+/****************************************************************
+ * ain_get_value
+ ****************************************************************/
+int ain_get_value(unsigned int ain, unsigned int *value) {
+	char buf[MAX_BUF];
+	snprintf(buf, sizeof(buf), "/sys/devices/ocp.2/helper.14/AIN%d", ain);
+	FILE* file = fopen(buf, "r");
+	fscanf (file, "%d", value);
+	fclose (file);
+return 0;
+}
+
+//NOT MY OWN WORK - thanks to a previous student
+// Read x axis value
+int read_x_Axis() {
+FILE* file = fopen("/sys/devices/ocp.2/helper.14/AIN4", "r");
+int num = 0;
+fscanf (file, "%d", &num);
+fclose (file);
+printf(" x-Axis num: %d ", num);
+fflush(stdout);
+return num;
+}
+
+// Read y axis value
+int read_y_Axis() {
+FILE* file = fopen("/sys/devices/ocp.2/helper.14/AIN6", "r");
+int num = 0;
+fscanf (file, "%d", &num);
+fclose (file);
+printf(" y-axis num: %d ", num);
+fflush(stdout);
+return num;
+}
+
 
 /****************************************************************
  * gpio_set_edge

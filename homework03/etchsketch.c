@@ -4,136 +4,208 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "gpio-utils.h"
+#include <errno.h>
 #include "i2c-dev.h"
-/* Written by Eric Ames for ECE497.
-Calling instructions: the first argument is taken as the board size, while the
-	next four arguments dictate from which gpio pins the on/off input is read.
+#include "i2cbusses.h"
 
-General: ./etchsketch <size> <tempAddr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio>
+#define BICOLOR		// undef if using a single color display
 
-I personally use ./etchsketch 20 72 ##51 15 60##
+/* Written by Eric Ames for ECE497. (Much of the i2c work was adapted from others.)
+Calling instructions: the first argument is taken as the board size, the second an optional decimal register (for later use, can be ignored now). 3rd and 4th are both the AIN # to call for the joystick. Final argument is the gpio pin to be read for the joystick toggle.
 
-THERE IS NO ERROR HANDLING. If you pass in bad arguments, it will Segfault.
+General: ./etchsketch <tempAddr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio>
+
+I personally use ./etchsketch 72 6 4 15
+
+THERE IS NO ERROR HANDLING. If you pass in bad arguments, bad things will happen.
 
 NOTE: This program would not be possible without the use of gpio-utils.c and its header, both of which are NOT MY OWN WORK, but from https://www.ridgerun.com/developer/wiki/index.php/
 */
 
+static __u16 initial1_bmp[]=
+	{0b0000000000000000, 0b0000000011111111, 0b0000000011111111,
+	 0b0000000011111111, 0b0000000011111111, 0b0000000011111111,
+	 0b0000000011111111, 0b0000000011111111};
+
+static __u16 initial2_bmp[]=
+	{0b1111111100000000, 0b1111111100000000, 0b1111111100000000,
+	 0b1111111100000000, 0b1111111100000000, 0b1111111100000000,
+	 0b1111111100000000, 0b1111111100000000};
+
+static __u16 initial3_bmp[]=
+	{0b0000000000000000, 0b0000000000000000, 0b0000000000000000,
+	 0b0000000000000000, 0b0000000000000000, 0b0000000000000000,
+	 0b0000000000000000, 0b0000000000000000};
+
+static int check_funcs(int file) {
+	unsigned long funcs;
+
+	/* check adapter functionality */
+	if (ioctl(file, I2C_FUNCS, &funcs) < 0) {
+		fprintf(stderr, "Error: Could not get the adapter "
+			"functionality matrix: %s\n", strerror(errno));
+		return -1;
+	}
+
+	if (!(funcs & I2C_FUNC_SMBUS_WRITE_BYTE)) {
+		fprintf(stderr, MISSING_FUNC_FMT, "SMBus send byte");
+		return -1;
+	}
+	return 0;
+}
+
+// Writes block of data to the display
+static int write_block(int file, __u16 *data) {
+	int res;
+	res = i2c_smbus_write_i2c_block_data(file, 0x00, 16, 
+		(__u8 *)data);
+	return res;
+}
+
+
 
 //Draws the initialboard with 1 'x'
-int initialdraw(int size, char* fieldArray){
+static int initialdraw(int size, char* fieldArray, int file){
 	int i=0; int l=0;
 	for(i; i<size; i++){
 		for(l; l<size; l++){
-			*fieldArray = ' ';
-			printf("%c", *fieldArray);
+			*fieldArray = '0';
 			fieldArray++;
 		}
 		l=0;
-		printf("\n");
 	}
+	write_block(file, initial1_bmp);
+	sleep(1);
+	write_block(file, initial2_bmp);
+	sleep(1);
+	write_block(file, initial3_bmp);
 return 0;
 }
 
 //Everytime a button is pressed, redraw is called to update the board.
-int redraw(int size, char fieldArray[size][size], int x, int y){
+static int redraw(int size, char fieldArray[size][size], int x, int y, int file){
 	int i=0; int l=0;
-	printf("Redrawing with %d and %d.\n", x, y);
-	fieldArray[y][x] = 'x';
+	char * ptr;
+	long parsed;
+	__u16 write_array[8];
+	char str[8];
+
+	fieldArray[y][x] = '1';
 
 	for(i; i<size; i++){
 		for(l; l<size; l++){
-			printf("%c", fieldArray[i][l]);
+			str[l] = fieldArray[i][l];
 		}
-		l=0;
-		printf("\n");
-	}	
+	parsed = strtol(str, & ptr, 2);
+	sprintf(str, "%ld", parsed);
+	write_array[i] = strtol(str, & ptr, 10);
+	l=0;
+	}
+	write_block(file, write_array);
 
 return 0;
 }
 
 //Main argument
 int main(int argc, char* argv[]){
-	printf("Starting!\n");
+
 	//Initial setup of variables	
-	int size = atoi(argv[1]);
+	int size = 8;
 	char fieldArray[size][size];
-	int x = 0;
-	int y = 0;
+	int x = 0; int y = 0;
+
+	system("echo cape-bone-iio > /sys/devices/bone_capemgr.*/slots");
+
+//i2c Setup-------------------------------------------------------
+
+	int res, i2cbus, address, file;
+	char filename[20];
+	int force = 0;
+
+	i2cbus = lookup_i2c_bus("1");
+	printf("i2cbus = %d\n", i2cbus);
+
+	address = parse_i2c_address("0x70");
+	printf("address = 0x%2x\n", address);
+
+	file = open_i2c_dev(i2cbus, filename, sizeof(filename), 0);
+	if (file < 0
+	 || check_funcs(file)
+	 || set_slave_addr(file, address, force))
+		//exit(1);
+
+	// Check the return value on these if there is trouble
+	i2c_smbus_write_byte(file, 0x21); // Start oscillator (p10)
+	i2c_smbus_write_byte(file, 0x81); // Disp on, blink off (p11)
+	i2c_smbus_write_byte(file, 0xe7); // Full brightness (page 15)
+
+
+//i2c Setup-------------------------------------------------------
 
 	//Draw initial board
-	printf("Begin initial draw...");
-	initialdraw(size, &fieldArray[0][0]);
-	printf("done.\n");
+	initialdraw(size, &fieldArray[0][0], file);
 
 	//Grab gpio values from input arguments
-	unsigned int tempAddr = atoi(argv[2]);
-	unsigned int B = atoi(argv[3]);
-	unsigned int C = atoi(argv[4]);
-	unsigned int D = atoi(argv[5]);
+	unsigned int tempAddr = atoi(argv[1]);
+	unsigned int ainA = atoi(argv[2]);
+	unsigned int ainB = atoi(argv[3]);
+	unsigned int toggle = atoi(argv[4]);
 
 	//export select gpios
-	gpio_export(D);	
-	gpio_set_dir(D, "in");
+	gpio_export(toggle);	
+	gpio_set_dir(toggle, "in");
 
 
-	//These variables are used to check whether the toggle value has changed.
-	//This way, it doesn't matter whether the toggle is high or low- only
-	//the change matters.
-	int x_pos, y_pos, sel;
+	//These variables are used to check for position and clearing the board.
+	int x_pos, y_pos;
+	int sel = 1;
 
 //CHANGE FOR AIN USE, NOT GPIOs
-//Focus on exploring AIN use for joystick, don't worry about temp yet.
-//Also, forgot, need to draw to pin grid?
-/*	1) Convert toggles to AIN
-	2) Draw to LED grid
+/*	1) Convert toggles to AIN - DONE
+	2) Draw to LED grid - CURRENT
 	3) Setup TMP to clear
 */
+	int i = 0;
 	while(1){
-		//Left
-		gpio_get_value(B, &value1A);
-		if (value1A != value1B && x > 0){
+		//Left & Right
+		ain_get_value(ainA, &x_pos);
+		ain_get_value(ainA, &x_pos);
+		fflush(stdout);
+		if (x_pos>1700 && x > 0){
 			--x;
-			redraw(size, fieldArray, x, y);
-			value1B = value1A;
+			redraw(size, fieldArray, x, y, file);
 		}
-		//Right
-		gpio_get_value(C, &value2A);
-		if (value2A != value2B && x < size){
+		else if (x_pos<100 && x < size-1){
 			++x;
-			redraw(size, fieldArray, x, y);
-			value2B = value2A;
+			redraw(size, fieldArray, x, y, file);
 		}
-		//Up
-		gpio_get_value(D, &value3A);
-		if (value3A != value3B && y > 0){
+		//Up & Down
+		ain_get_value(ainB, &y_pos);
+		ain_get_value(ainB, &y_pos);
+		if (y_pos>1600 && y > 0){
 			--y;
-			redraw(size, fieldArray, x, y);
-			value3B = value3A;
+			redraw(size, fieldArray, x, y, file);
 		}
-		//Down
-		gpio_get_value(D, &value4A);
-		if (value4A != value4B && y < size){
+		else if (y_pos<200 && y < size-1){
 			++y;
-			redraw(size, fieldArray, x, y);
-			value4B = value4A;
+			redraw(size, fieldArray, x, y, file);
 		}
-		//Clear method 1
-		gpio_get_value(D, &sel);
-		if (sel == 1){
-			initialdraw(size, &fieldArray[0][0]);
+
+		//Clear method 1 //CHANGE
+		gpio_get_value(toggle, &sel);
+		if (sel == 0 && x < size-1){
+			initialdraw(size, &fieldArray[0][0], file);
+			sel == 1;
 		}
-		//Clear method 2
-/*		gpio_get_value(E, &value5A);
-		if (value5A != value5B){
-			initialdraw(size, &fieldArray[0][0]);
-			value5B = value5A;
-		}
-	*/
-	sleep(0.5);
+	printf("Running...\n");
+	printf("X pos: %d\n", x_pos);
+	printf("Y pos: %d\n", y_pos);
+	sleep(1);
+
 	}
 
 
 
-
+close(file);
 return 0;
 }
