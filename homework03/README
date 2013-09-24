@@ -27,8 +27,8 @@ my args: 72 73 1f 1c 14 48 49
 Third is the LED-etchsketch interface. Due to the joystick issues, I was forced to revert to buttons- although you can still use the joystick to toggle clear.
 
 ./etchsketch <Dec_Addr1> <x_axis_gpio> <y_axis_gpio> <toggle_gpio> 
-<left_gpio> <right> <up> <down>
+<btn_left> <btn_right>
 
 my args: 72 6 4 15
 
-Note that the decimal_address_1 is, as of writing this, not used. It's for a possible temperature interface.
+Note that the decimal_address_1 is, as of writing this, not used. It's for a possible temperature interface. Also pressing both btn1 and 2 together results in UP.
