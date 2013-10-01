@@ -8,7 +8,8 @@
 #define PIN_MUX_PATH "/sys/kernel/debug/omap_mux/"
 #define MAX_BUF 64
 
-/*Written by Eric Ames and David Cooper, heavily based off of LightTracker.c
+/*MAIN function written by Eric Ames and David Cooper;
+	sub-functions taken from LightTracker.c
 
 ./luxCanis <toggle_button> <AINPin1> <AINPin2>
 
@@ -121,18 +122,22 @@ void rotateClock (int current){
 	usleep(60000);
 
 }
+
 //*****************END Functions taken from LightTracker******************
 
 
 //MAIN function.
 int main(int argc, char *argv[]){
+		system("echo cape-bone-iio > /sys/devices/bone_capemgr.*/slots");
+		
 		controlGPIOs[0] = 30;
 		controlGPIOs[1] = 31;
 		controlGPIOs[2] = 48;
 		controlGPIOs[3] = 51;
 	
-	int i, k, samples[20], min, toggle, minIndex, contine, counter, minFound;
+	int i, k, samples[20], min, toggle, minIndex, contine, counter, minFound, difference;
 	minFound = 0;
+	int rotation = 0;
 	min = 99999;
 	counter = 0;
 	contine = 1;
@@ -174,32 +179,35 @@ while(contine){
 				counter++;
 			}
 		}
-		printf("%d\n", counter);
 		for(i=0; i<((20-minIndex)%4); i++){
 			rotateClock(3-i);
 			counter++;
 		}
-		printf("%d\n", counter);
 		minFound = 1;
 	}
 	//Track light source
+
 	if(minFound == 1){
+		difference = analogIn(ain[0])-(analogIn(ain[1])-500);
+		printf("%d\n", difference);
 		//Moving Left and Right
-		if((analogIn(ain[0])-analogIn(ain[1])>150)){
-			rotateClock(0);
-			rotateClock(1);
-			rotateClock(2);
-			rotateClock(3);
-			printf("Should move Clockwise");
-		}else if((analogIn(ain[0])-analogIn(ain[1])<-150)){
-			rotateClock(3);
-			rotateClock(2);
-			rotateClock(1);
-			rotateClock(0);
-			printf("Should move Counterclockwise");
+		if(rotation >= 3){
+			rotation = 0;
 		}
+		if(difference > 400){
+			rotateClock(rotation);
+			rotation++;
+			rotateClock(rotation);
+			rotation++;
+		}else if(difference < -400){
+			rotateClock(3-rotation);
+			rotation++;
+			rotateClock(3-rotation);
+			rotation++;
+		}
+		
 		fflush(stdout);
-		usleep(2000000);
+		usleep(250000);
 	}
 }
 return 0;
