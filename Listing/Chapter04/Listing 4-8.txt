@@ -1,0 +1,32 @@
+//Mostly the same as the vanilla kernel, but apparently no case
+for the CLPS7500.
+
+source "init/Kconfig"
+
+source "kernel/Kconfig.freezer"
+
+menu "System Type"
+
+#
+# The "ARM system type" choice list is ordered alphabetically by option
+# text.  Please add new entries in the option alphabetic order.
+#
+choice
+	prompt "ARM system type"
+	default ARCH_MULTIPLATFORM
+	
+//There doesn't appear to be a case for the CLPS7500
+
+config ARCH_CLPS711X
+	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
+	select ARCH_REQUIRE_GPIOLIB
+	select AUTO_ZRELADDR
+	select CLKDEV_LOOKUP
+	select COMMON_CLK
+	select CPU_ARM720T
+	select GENERIC_CLOCKEVENTS
+	select MULTI_IRQ_HANDLER
+	select NEED_MACH_MEMORY_H
+	select SPARSE_IRQ
+	help
+	  Support for Cirrus Logic 711x/721x/731x based boards.

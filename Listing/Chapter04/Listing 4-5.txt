@@ -1,0 +1,20 @@
+The different listing were scattered about the autoconfig, but
+the ones that I couldn't find are listed below with a //// before
+their calling. The others I was able to find. The Big Endian ones
+not being present is hardly surprising, given their name.
+
+
+#define CONFIG_USB_ARCH_HAS_EHCI 1
+#define CONFIG_USB_HID 1
+////#define CONFIG_USB_EHCI_BIG_ENDIAN_DESC 1
+#define CONFIG_USB_ARCH_HAS_OHCI 1
+////#define CONFIG_USB_EHCI_BIG_ENDIAN_MMIO 1
+#define CONFIG_USB_STORAGE 1
+#define CONFIG_USB_SUPPORT 1
+////#define CONFIG_USB_EHCI_HCD 1
+////#define CONFIG_USB_DEVICEFS 1
+////#define CONFIG_USB_OHCI_HCD 1
+////#define CONFIG_USB_UHCI_HCD 1
+////#define CONFIG_USB_OHCI_LITTLE_ENDIAN 1
+#define CONFIG_USB_ARCH_HAS_HCD 1
+#define CONFIG_USB 1
