@@ -1,0 +1,11 @@
+[Unit]
+Description=Bonescript server
+
+[Service]
+WorkingDirectory=/home/root/BeagleBoard-exercises/realtime/
+Environment=NODE_PATH=/usr/lib/node_modules
+ExecStart=/home/root/BeagleBoard-exercises/realtime/boneServer.js
+SyslogIdentifier=bonescript
+
+[Install]
+WantedBy=multi-user.target
