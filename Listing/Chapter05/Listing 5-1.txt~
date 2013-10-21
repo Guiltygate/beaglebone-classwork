@@ -1,0 +1,4 @@
+I had originally run the rebuild command and piped the new kernel over to the Beagle;
+however, despite having built and rebuilt the kernel, I can no longer execute either
+command successfully for some reason. I will probably delete my local repo and 
+redownload everything and try building the kernel again tonight when I go to bed.
