@@ -15,21 +15,21 @@ var port = 8080, // Port to listen on
 		Speaker = require('speaker'),
 		async = require('async');
  
-//Encoder and Decoder
+//Decoder
 var audioOptions = {channels: 2, bitDepth: 16, sampleRate: 44100};
-var encoder = lame.Encoder(audioOptions);
-encoder.on("data", function(data) {sendData(data);});
-
 var decoder = lame.Decoder();
-decoder.on('format', function(format) {decoder.pipe(encoder);});
 
-//Read in current directory for processing
-var files = fs.readdirSync('.');
+
+//Read in preset directory for processing of .mp3's
+var mountpath = '/mnt/server_media/';
+var files = fs.readdirSync(mountpath + '.'),
+	songs = [],
+	songlist = [];
 
 console.log(files);
 
-var songs = files.forEach(function(file){
-	if(path.extname === 'mp3'){return file;}
+files.forEach(function(file){
+	if(path.extname(file) === '.mp3'){songs.push(mountpath + file); songlist.push(file);}
 });	
 
 console.log(songs);
@@ -61,11 +61,20 @@ server = http.createServer(function (req, res) {
 
 server.listen(port);
 console.log("Listening on " + port);
+/**
+var speaker1 = new Speaker(audioOptions);
+var speaker2 = new Speaker(audioOptions);
 
+var stream1 = fs.createReadStream(songs[3]); //loads vampires
+var stream2 = fs.createReadStream(songs[0]); //loads shoes
 
+stream1.pipe(decoder).pipe(speaker1); //streams vampires
+**/
 //socket.io events
 var io = require('socket.io').listen(server);
 io.set('log level', 2);
+
+//on 'finish' and 'flush' receive "Error: write after end." comes from events.js:69
 
 // on a 'connection' event
 io.sockets.on('connection', function (socket) {
@@ -78,14 +87,17 @@ io.sockets.on('connection', function (socket) {
 		async.eachSeries(songs, function(song, done){
 			var speaker = new Speaker(audioOptions);
 			var inputStream = fs.createReadStream(song);
+			var decoderNew = lame.Decoder();
+			inputStream.pipe(decoderNew).pipe(speaker);
 			
-			inputStream.pipe(decoder).pipe(speaker);
-			
-			speaker.on('finish', function(){
+			speaker.on('close', function(){
+				console.log("Finished a file!");
 				done();
 			});
 		});
 	});
+	
+	socket.on('getCurrentList', function(){console.log("Received playlist call!"); socket.emit('txCurrentList', songlist);});
 
     connectCount++;
     console.log("connectCount = " + connectCount);
