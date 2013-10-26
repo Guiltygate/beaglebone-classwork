@@ -1,0 +1,1159 @@
+From 605547832625ec47e498928bc40743eafbe347aa Mon Sep 17 00:00:00 2001
+From: Eric Ames <amesen07@gmail.com>
+Date: Sat, 26 Oct 2013 14:04:33 -0400
+Subject: [PATCH] Added examples to linux-dev
+
+---
+ examples/.built-in.o.cmd   |    1 +
+ examples/.hello1.ko.cmd    |    1 +
+ examples/.hello1.mod.o.cmd |  410 ++++++++++++++++++++++++++++++++++++++++++++
+ examples/.hello1.o.cmd     |  408 +++++++++++++++++++++++++++++++++++++++++++
+ examples/Makefile          |    2 +
+ examples/Makefile~         |    2 +
+ examples/built-in.o        |  Bin 0 -> 2284 bytes
+ examples/hello1.c          |   28 +++
+ examples/hello1.c~         |   27 +++
+ examples/hello1.ko         |  Bin 0 -> 4774 bytes
+ examples/hello1.mod.c      |   35 ++++
+ examples/hello1.mod.o      |  Bin 0 -> 2140 bytes
+ examples/hello1.o          |  Bin 0 -> 3292 bytes
+ examples/modules.builtin   |    1 +
+ examples/modules.order     |    1 +
+ 15 files changed, 916 insertions(+)
+ create mode 100644 examples/.built-in.o.cmd
+ create mode 100644 examples/.hello1.ko.cmd
+ create mode 100644 examples/.hello1.mod.o.cmd
+ create mode 100644 examples/.hello1.o.cmd
+ create mode 100644 examples/Makefile
+ create mode 100644 examples/Makefile~
+ create mode 100644 examples/built-in.o
+ create mode 100644 examples/hello1.c
+ create mode 100644 examples/hello1.c~
+ create mode 100644 examples/hello1.ko
+ create mode 100644 examples/hello1.mod.c
+ create mode 100644 examples/hello1.mod.o
+ create mode 100644 examples/hello1.o
+ create mode 100644 examples/hello1.patch
+ create mode 100644 examples/modules.builtin
+ create mode 100644 examples/modules.order
+
+diff --git a/examples/.built-in.o.cmd b/examples/.built-in.o.cmd
+new file mode 100644
+index 0000000..f5db44c
+--- /dev/null
++++ b/examples/.built-in.o.cmd
+@@ -0,0 +1 @@
++cmd_drivers/char/examples/built-in.o :=  arm-linux-gnueabi-ld -EL    -r -o drivers/char/examples/built-in.o drivers/char/examples/hello1.o 
+diff --git a/examples/.hello1.ko.cmd b/examples/.hello1.ko.cmd
+new file mode 100644
+index 0000000..5a74341
+--- /dev/null
++++ b/examples/.hello1.ko.cmd
+@@ -0,0 +1 @@
++cmd_drivers/char/examples/hello1.ko := arm-linux-gnueabi-ld -EL -r  -T /home/amesen/BeagleBone/linux-dev/KERNEL/scripts/module-common.lds --build-id  -o drivers/char/examples/hello1.ko drivers/char/examples/hello1.o drivers/char/examples/hello1.mod.o
+diff --git a/examples/.hello1.mod.o.cmd b/examples/.hello1.mod.o.cmd
+new file mode 100644
+index 0000000..d56c448
+--- /dev/null
++++ b/examples/.hello1.mod.o.cmd
+@@ -0,0 +1,410 @@
++cmd_drivers/char/examples/hello1.mod.o := arm-linux-gnueabi-gcc -Wp,-MD,drivers/char/examples/.hello1.mod.o.d  -nostdinc -isystem /usr/lib/gcc/arm-linux-gnueabi/4.6/include -I/home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include -Iarch/arm/include/generated  -Iinclude -I/home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi -Iinclude/generated/uapi -include /home/amesen/BeagleBone/linux-dev/KERNEL/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-omap2/include -Iarch/arm/plat-omap/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Wno-error=pointer-sign -fno-stack-protector -Os -fno-dwarf2-cfi-asm -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(hello1.mod)"  -D"KBUILD_MODNAME=KBUILD_STR(hello1)" -DMODULE  -c -o drivers/char/examples/hello1.mod.o drivers/char/examples/hello1.mod.c
++
++source_drivers/char/examples/hello1.mod.o := drivers/char/examples/hello1.mod.c
++
++deps_drivers/char/examples/hello1.mod.o := \
++    $(wildcard include/config/module/unload.h) \
++  include/linux/module.h \
++    $(wildcard include/config/sysfs.h) \
++    $(wildcard include/config/modules.h) \
++    $(wildcard include/config/unused/symbols.h) \
++    $(wildcard include/config/module/sig.h) \
++    $(wildcard include/config/generic/bug.h) \
++    $(wildcard include/config/kallsyms.h) \
++    $(wildcard include/config/smp.h) \
++    $(wildcard include/config/tracepoints.h) \
++    $(wildcard include/config/tracing.h) \
++    $(wildcard include/config/event/tracing.h) \
++    $(wildcard include/config/ftrace/mcount/record.h) \
++    $(wildcard include/config/constructors.h) \
++    $(wildcard include/config/debug/set/module/ronx.h) \
++  include/linux/list.h \
++    $(wildcard include/config/debug/list.h) \
++  include/linux/types.h \
++    $(wildcard include/config/uid16.h) \
++    $(wildcard include/config/lbdaf.h) \
++    $(wildcard include/config/arch/dma/addr/t/64bit.h) \
++    $(wildcard include/config/phys/addr/t/64bit.h) \
++    $(wildcard include/config/64bit.h) \
++  include/uapi/linux/types.h \
++  arch/arm/include/generated/asm/types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/types.h \
++  include/asm-generic/int-ll64.h \
++  include/uapi/asm-generic/int-ll64.h \
++  arch/arm/include/generated/asm/bitsperlong.h \
++  include/asm-generic/bitsperlong.h \
++  include/uapi/asm-generic/bitsperlong.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/posix_types.h \
++  include/linux/stddef.h \
++  include/uapi/linux/stddef.h \
++  include/linux/compiler.h \
++    $(wildcard include/config/sparse/rcu/pointer.h) \
++    $(wildcard include/config/trace/branch/profiling.h) \
++    $(wildcard include/config/profile/all/branches.h) \
++    $(wildcard include/config/enable/must/check.h) \
++    $(wildcard include/config/enable/warn/deprecated.h) \
++  include/linux/compiler-gcc.h \
++    $(wildcard include/config/arch/supports/optimized/inlining.h) \
++    $(wildcard include/config/optimize/inlining.h) \
++  include/linux/compiler-gcc4.h \
++    $(wildcard include/config/arch/use/builtin/bswap.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/posix_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/posix_types.h \
++  include/linux/poison.h \
++    $(wildcard include/config/illegal/pointer/value.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/const.h \
++  include/linux/stat.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/stat.h \
++  include/uapi/linux/stat.h \
++  include/linux/time.h \
++    $(wildcard include/config/arch/uses/gettimeoffset.h) \
++  include/linux/cache.h \
++    $(wildcard include/config/arch/has/cache/line/size.h) \
++  include/linux/kernel.h \
++    $(wildcard include/config/preempt/voluntary.h) \
++    $(wildcard include/config/debug/atomic/sleep.h) \
++    $(wildcard include/config/prove/locking.h) \
++    $(wildcard include/config/ring/buffer.h) \
++    $(wildcard include/config/symbol/prefix.h) \
++  /usr/lib/gcc/arm-linux-gnueabi/4.6/include/stdarg.h \
++  include/linux/linkage.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/linkage.h \
++  include/linux/bitops.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/bitops.h \
++  include/linux/irqflags.h \
++    $(wildcard include/config/trace/irqflags.h) \
++    $(wildcard include/config/irqsoff/tracer.h) \
++    $(wildcard include/config/preempt/tracer.h) \
++    $(wildcard include/config/trace/irqflags/support.h) \
++  include/linux/typecheck.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/irqflags.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/ptrace.h \
++    $(wildcard include/config/arm/thumb.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/ptrace.h \
++    $(wildcard include/config/cpu/endian/be8.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/hwcap.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/hwcap.h \
++  include/asm-generic/bitops/non-atomic.h \
++  include/asm-generic/bitops/fls64.h \
++  include/asm-generic/bitops/sched.h \
++  include/asm-generic/bitops/hweight.h \
++  include/asm-generic/bitops/arch_hweight.h \
++  include/asm-generic/bitops/const_hweight.h \
++  include/asm-generic/bitops/lock.h \
++  include/asm-generic/bitops/le.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/byteorder.h \
++  include/linux/byteorder/little_endian.h \
++  include/uapi/linux/byteorder/little_endian.h \
++  include/linux/swab.h \
++  include/uapi/linux/swab.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/swab.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/swab.h \
++  include/linux/byteorder/generic.h \
++  include/asm-generic/bitops/ext2-atomic-setbit.h \
++  include/linux/log2.h \
++    $(wildcard include/config/arch/has/ilog2/u32.h) \
++    $(wildcard include/config/arch/has/ilog2/u64.h) \
++  include/linux/printk.h \
++    $(wildcard include/config/printk.h) \
++    $(wildcard include/config/dynamic/debug.h) \
++  include/linux/init.h \
++    $(wildcard include/config/broken/rodata.h) \
++  include/linux/kern_levels.h \
++  include/linux/dynamic_debug.h \
++  include/linux/string.h \
++    $(wildcard include/config/binary/printf.h) \
++  include/uapi/linux/string.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/string.h \
++  include/linux/errno.h \
++  include/uapi/linux/errno.h \
++  arch/arm/include/generated/asm/errno.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/errno.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/errno-base.h \
++  include/uapi/linux/kernel.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/sysinfo.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/div64.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/compiler.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/bug.h \
++    $(wildcard include/config/bug.h) \
++    $(wildcard include/config/thumb2/kernel.h) \
++    $(wildcard include/config/debug/bugverbose.h) \
++    $(wildcard include/config/arm/lpae.h) \
++  include/asm-generic/bug.h \
++    $(wildcard include/config/generic/bug/relative/pointers.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/cache.h \
++    $(wildcard include/config/arm/l1/cache/shift.h) \
++    $(wildcard include/config/aeabi.h) \
++  include/linux/seqlock.h \
++  include/linux/spinlock.h \
++    $(wildcard include/config/debug/spinlock.h) \
++    $(wildcard include/config/generic/lockbreak.h) \
++    $(wildcard include/config/preempt.h) \
++    $(wildcard include/config/debug/lock/alloc.h) \
++  include/linux/preempt.h \
++    $(wildcard include/config/debug/preempt.h) \
++    $(wildcard include/config/preempt/count.h) \
++    $(wildcard include/config/preempt/notifiers.h) \
++  include/linux/thread_info.h \
++    $(wildcard include/config/compat.h) \
++    $(wildcard include/config/debug/stack/usage.h) \
++  include/linux/bug.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/thread_info.h \
++    $(wildcard include/config/crunch.h) \
++    $(wildcard include/config/arm/thumbee.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/fpstate.h \
++    $(wildcard include/config/vfpv3.h) \
++    $(wildcard include/config/iwmmxt.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/domain.h \
++    $(wildcard include/config/io/36.h) \
++    $(wildcard include/config/cpu/use/domains.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/barrier.h \
++    $(wildcard include/config/cpu/32v6k.h) \
++    $(wildcard include/config/cpu/xsc3.h) \
++    $(wildcard include/config/cpu/fa526.h) \
++    $(wildcard include/config/arch/has/barriers.h) \
++    $(wildcard include/config/arm/dma/mem/bufferable.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/outercache.h \
++    $(wildcard include/config/outer/cache/sync.h) \
++    $(wildcard include/config/outer/cache.h) \
++  include/linux/stringify.h \
++  include/linux/bottom_half.h \
++  include/linux/spinlock_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/spinlock_types.h \
++  include/linux/lockdep.h \
++    $(wildcard include/config/lockdep.h) \
++    $(wildcard include/config/lock/stat.h) \
++    $(wildcard include/config/prove/rcu.h) \
++  include/linux/rwlock_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/spinlock.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/processor.h \
++    $(wildcard include/config/have/hw/breakpoint.h) \
++    $(wildcard include/config/mmu.h) \
++    $(wildcard include/config/arm/errata/754327.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/hw_breakpoint.h \
++  include/linux/rwlock.h \
++  include/linux/spinlock_api_smp.h \
++    $(wildcard include/config/inline/spin/lock.h) \
++    $(wildcard include/config/inline/spin/lock/bh.h) \
++    $(wildcard include/config/inline/spin/lock/irq.h) \
++    $(wildcard include/config/inline/spin/lock/irqsave.h) \
++    $(wildcard include/config/inline/spin/trylock.h) \
++    $(wildcard include/config/inline/spin/trylock/bh.h) \
++    $(wildcard include/config/uninline/spin/unlock.h) \
++    $(wildcard include/config/inline/spin/unlock/bh.h) \
++    $(wildcard include/config/inline/spin/unlock/irq.h) \
++    $(wildcard include/config/inline/spin/unlock/irqrestore.h) \
++  include/linux/rwlock_api_smp.h \
++    $(wildcard include/config/inline/read/lock.h) \
++    $(wildcard include/config/inline/write/lock.h) \
++    $(wildcard include/config/inline/read/lock/bh.h) \
++    $(wildcard include/config/inline/write/lock/bh.h) \
++    $(wildcard include/config/inline/read/lock/irq.h) \
++    $(wildcard include/config/inline/write/lock/irq.h) \
++    $(wildcard include/config/inline/read/lock/irqsave.h) \
++    $(wildcard include/config/inline/write/lock/irqsave.h) \
++    $(wildcard include/config/inline/read/trylock.h) \
++    $(wildcard include/config/inline/write/trylock.h) \
++    $(wildcard include/config/inline/read/unlock.h) \
++    $(wildcard include/config/inline/write/unlock.h) \
++    $(wildcard include/config/inline/read/unlock/bh.h) \
++    $(wildcard include/config/inline/write/unlock/bh.h) \
++    $(wildcard include/config/inline/read/unlock/irq.h) \
++    $(wildcard include/config/inline/write/unlock/irq.h) \
++    $(wildcard include/config/inline/read/unlock/irqrestore.h) \
++    $(wildcard include/config/inline/write/unlock/irqrestore.h) \
++  include/linux/atomic.h \
++    $(wildcard include/config/arch/has/atomic/or.h) \
++    $(wildcard include/config/generic/atomic64.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/atomic.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/cmpxchg.h \
++    $(wildcard include/config/cpu/sa1100.h) \
++    $(wildcard include/config/cpu/sa110.h) \
++    $(wildcard include/config/cpu/v6.h) \
++  include/asm-generic/cmpxchg-local.h \
++  include/asm-generic/atomic-long.h \
++  include/linux/math64.h \
++  include/uapi/linux/time.h \
++  include/linux/uidgid.h \
++    $(wildcard include/config/uidgid/strict/type/checks.h) \
++    $(wildcard include/config/user/ns.h) \
++  include/linux/highuid.h \
++  include/linux/kmod.h \
++  include/linux/gfp.h \
++    $(wildcard include/config/numa.h) \
++    $(wildcard include/config/highmem.h) \
++    $(wildcard include/config/zone/dma.h) \
++    $(wildcard include/config/zone/dma32.h) \
++    $(wildcard include/config/pm/sleep.h) \
++    $(wildcard include/config/cma.h) \
++  include/linux/mmzone.h \
++    $(wildcard include/config/force/max/zoneorder.h) \
++    $(wildcard include/config/memcg.h) \
++    $(wildcard include/config/compaction.h) \
++    $(wildcard include/config/memory/hotplug.h) \
++    $(wildcard include/config/sparsemem.h) \
++    $(wildcard include/config/have/memblock/node/map.h) \
++    $(wildcard include/config/discontigmem.h) \
++    $(wildcard include/config/flat/node/mem/map.h) \
++    $(wildcard include/config/no/bootmem.h) \
++    $(wildcard include/config/numa/balancing.h) \
++    $(wildcard include/config/have/memory/present.h) \
++    $(wildcard include/config/have/memoryless/nodes.h) \
++    $(wildcard include/config/need/node/memmap/size.h) \
++    $(wildcard include/config/need/multiple/nodes.h) \
++    $(wildcard include/config/have/arch/early/pfn/to/nid.h) \
++    $(wildcard include/config/flatmem.h) \
++    $(wildcard include/config/sparsemem/extreme.h) \
++    $(wildcard include/config/have/arch/pfn/valid.h) \
++    $(wildcard include/config/nodes/span/other/nodes.h) \
++    $(wildcard include/config/holes/in/zone.h) \
++    $(wildcard include/config/arch/has/holes/memorymodel.h) \
++  include/linux/wait.h \
++  arch/arm/include/generated/asm/current.h \
++  include/asm-generic/current.h \
++  include/uapi/linux/wait.h \
++  include/linux/threads.h \
++    $(wildcard include/config/nr/cpus.h) \
++    $(wildcard include/config/base/small.h) \
++  include/linux/numa.h \
++    $(wildcard include/config/nodes/shift.h) \
++  include/linux/nodemask.h \
++    $(wildcard include/config/movable/node.h) \
++  include/linux/bitmap.h \
++  include/linux/pageblock-flags.h \
++    $(wildcard include/config/hugetlb/page.h) \
++    $(wildcard include/config/hugetlb/page/size/variable.h) \
++  include/generated/bounds.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/page.h \
++    $(wildcard include/config/cpu/copy/v4wt.h) \
++    $(wildcard include/config/cpu/copy/v4wb.h) \
++    $(wildcard include/config/cpu/copy/feroceon.h) \
++    $(wildcard include/config/cpu/copy/fa.h) \
++    $(wildcard include/config/cpu/xscale.h) \
++    $(wildcard include/config/cpu/copy/v6.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/glue.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/pgtable-2level-types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/memory.h \
++    $(wildcard include/config/need/mach/memory/h.h) \
++    $(wildcard include/config/page/offset.h) \
++    $(wildcard include/config/dram/size.h) \
++    $(wildcard include/config/dram/base.h) \
++    $(wildcard include/config/have/tcm.h) \
++    $(wildcard include/config/arm/patch/phys/virt.h) \
++    $(wildcard include/config/phys/offset.h) \
++  include/linux/sizes.h \
++  include/asm-generic/memory_model.h \
++    $(wildcard include/config/sparsemem/vmemmap.h) \
++  include/asm-generic/getorder.h \
++  include/linux/memory_hotplug.h \
++    $(wildcard include/config/memory/hotremove.h) \
++    $(wildcard include/config/have/arch/nodedata/extension.h) \
++  include/linux/notifier.h \
++  include/linux/mutex.h \
++    $(wildcard include/config/debug/mutexes.h) \
++    $(wildcard include/config/have/arch/mutex/cpu/relax.h) \
++  include/linux/mutex-debug.h \
++  include/linux/rwsem.h \
++    $(wildcard include/config/rwsem/generic/spinlock.h) \
++  include/linux/rwsem-spinlock.h \
++  include/linux/srcu.h \
++  include/linux/rcupdate.h \
++    $(wildcard include/config/rcu/torture/test.h) \
++    $(wildcard include/config/tree/rcu.h) \
++    $(wildcard include/config/tree/preempt/rcu.h) \
++    $(wildcard include/config/rcu/trace.h) \
++    $(wildcard include/config/preempt/rcu.h) \
++    $(wildcard include/config/rcu/user/qs.h) \
++    $(wildcard include/config/tiny/rcu.h) \
++    $(wildcard include/config/tiny/preempt/rcu.h) \
++    $(wildcard include/config/debug/objects/rcu/head.h) \
++    $(wildcard include/config/hotplug/cpu.h) \
++    $(wildcard include/config/preempt/rt.h) \
++  include/linux/cpumask.h \
++    $(wildcard include/config/cpumask/offstack.h) \
++    $(wildcard include/config/debug/per/cpu/maps.h) \
++    $(wildcard include/config/disable/obsolete/cpumask/functions.h) \
++  include/linux/completion.h \
++  include/linux/debugobjects.h \
++    $(wildcard include/config/debug/objects.h) \
++    $(wildcard include/config/debug/objects/free.h) \
++  include/linux/rcutree.h \
++  include/linux/workqueue.h \
++    $(wildcard include/config/debug/objects/work.h) \
++    $(wildcard include/config/freezer.h) \
++  include/linux/timer.h \
++    $(wildcard include/config/timer/stats.h) \
++    $(wildcard include/config/debug/objects/timers.h) \
++  include/linux/ktime.h \
++    $(wildcard include/config/ktime/scalar.h) \
++  include/linux/jiffies.h \
++  include/linux/timex.h \
++  include/uapi/linux/timex.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/param.h \
++  arch/arm/include/generated/asm/param.h \
++  include/asm-generic/param.h \
++    $(wildcard include/config/hz.h) \
++  include/uapi/asm-generic/param.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/timex.h \
++    $(wildcard include/config/arch/multiplatform.h) \
++  arch/arm/mach-omap2/include/mach/timex.h \
++  arch/arm/plat-omap/include/plat/timex.h \
++    $(wildcard include/config/omap/32k/timer.h) \
++    $(wildcard include/config/omap/32k/timer/hz.h) \
++  include/linux/topology.h \
++    $(wildcard include/config/sched/smt.h) \
++    $(wildcard include/config/sched/mc.h) \
++    $(wildcard include/config/sched/book.h) \
++    $(wildcard include/config/use/percpu/numa/node/id.h) \
++  include/linux/smp.h \
++    $(wildcard include/config/use/generic/smp/helpers.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/smp.h \
++  include/linux/percpu.h \
++    $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
++    $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
++    $(wildcard include/config/have/setup/per/cpu/area.h) \
++  include/linux/pfn.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/percpu.h \
++  include/asm-generic/percpu.h \
++  include/linux/percpu-defs.h \
++    $(wildcard include/config/debug/force/weak/per/cpu.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/topology.h \
++    $(wildcard include/config/arm/cpu/topology.h) \
++  include/asm-generic/topology.h \
++  include/linux/mmdebug.h \
++    $(wildcard include/config/debug/vm.h) \
++    $(wildcard include/config/debug/virtual.h) \
++  include/linux/sysctl.h \
++    $(wildcard include/config/sysctl.h) \
++  include/linux/rbtree.h \
++  include/uapi/linux/sysctl.h \
++  include/linux/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/user.h \
++  include/uapi/linux/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/elf-em.h \
++  include/linux/kobject.h \
++  include/linux/sysfs.h \
++  include/linux/kobject_ns.h \
++  include/linux/kref.h \
++  include/linux/moduleparam.h \
++    $(wildcard include/config/alpha.h) \
++    $(wildcard include/config/ia64.h) \
++    $(wildcard include/config/ppc64.h) \
++  include/linux/tracepoint.h \
++  include/linux/static_key.h \
++  include/linux/jump_label.h \
++    $(wildcard include/config/jump/label.h) \
++  include/linux/export.h \
++    $(wildcard include/config/modversions.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/module.h \
++    $(wildcard include/config/arm/unwind.h) \
++  include/asm-generic/module.h \
++    $(wildcard include/config/have/mod/arch/specific.h) \
++    $(wildcard include/config/modules/use/elf/rel.h) \
++    $(wildcard include/config/modules/use/elf/rela.h) \
++  include/linux/vermagic.h \
++  include/generated/utsrelease.h \
++
++drivers/char/examples/hello1.mod.o: $(deps_drivers/char/examples/hello1.mod.o)
++
++$(deps_drivers/char/examples/hello1.mod.o):
+diff --git a/examples/.hello1.o.cmd b/examples/.hello1.o.cmd
+new file mode 100644
+index 0000000..b220834
+--- /dev/null
++++ b/examples/.hello1.o.cmd
+@@ -0,0 +1,408 @@
++cmd_drivers/char/examples/hello1.o := arm-linux-gnueabi-gcc -Wp,-MD,drivers/char/examples/.hello1.o.d  -nostdinc -isystem /usr/lib/gcc/arm-linux-gnueabi/4.6/include -I/home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include -Iarch/arm/include/generated  -Iinclude -I/home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi -Iinclude/generated/uapi -include /home/amesen/BeagleBone/linux-dev/KERNEL/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-omap2/include -Iarch/arm/plat-omap/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Wno-error=pointer-sign -fno-stack-protector -Os -fno-dwarf2-cfi-asm -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack  -DMODULE  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(hello1)"  -D"KBUILD_MODNAME=KBUILD_STR(hello1)" -c -o drivers/char/examples/.tmp_hello1.o drivers/char/examples/hello1.c
++
++source_drivers/char/examples/hello1.o := drivers/char/examples/hello1.c
++
++deps_drivers/char/examples/hello1.o := \
++  include/linux/module.h \
++    $(wildcard include/config/sysfs.h) \
++    $(wildcard include/config/modules.h) \
++    $(wildcard include/config/unused/symbols.h) \
++    $(wildcard include/config/module/sig.h) \
++    $(wildcard include/config/generic/bug.h) \
++    $(wildcard include/config/kallsyms.h) \
++    $(wildcard include/config/smp.h) \
++    $(wildcard include/config/tracepoints.h) \
++    $(wildcard include/config/tracing.h) \
++    $(wildcard include/config/event/tracing.h) \
++    $(wildcard include/config/ftrace/mcount/record.h) \
++    $(wildcard include/config/module/unload.h) \
++    $(wildcard include/config/constructors.h) \
++    $(wildcard include/config/debug/set/module/ronx.h) \
++  include/linux/list.h \
++    $(wildcard include/config/debug/list.h) \
++  include/linux/types.h \
++    $(wildcard include/config/uid16.h) \
++    $(wildcard include/config/lbdaf.h) \
++    $(wildcard include/config/arch/dma/addr/t/64bit.h) \
++    $(wildcard include/config/phys/addr/t/64bit.h) \
++    $(wildcard include/config/64bit.h) \
++  include/uapi/linux/types.h \
++  arch/arm/include/generated/asm/types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/types.h \
++  include/asm-generic/int-ll64.h \
++  include/uapi/asm-generic/int-ll64.h \
++  arch/arm/include/generated/asm/bitsperlong.h \
++  include/asm-generic/bitsperlong.h \
++  include/uapi/asm-generic/bitsperlong.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/posix_types.h \
++  include/linux/stddef.h \
++  include/uapi/linux/stddef.h \
++  include/linux/compiler.h \
++    $(wildcard include/config/sparse/rcu/pointer.h) \
++    $(wildcard include/config/trace/branch/profiling.h) \
++    $(wildcard include/config/profile/all/branches.h) \
++    $(wildcard include/config/enable/must/check.h) \
++    $(wildcard include/config/enable/warn/deprecated.h) \
++  include/linux/compiler-gcc.h \
++    $(wildcard include/config/arch/supports/optimized/inlining.h) \
++    $(wildcard include/config/optimize/inlining.h) \
++  include/linux/compiler-gcc4.h \
++    $(wildcard include/config/arch/use/builtin/bswap.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/posix_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/posix_types.h \
++  include/linux/poison.h \
++    $(wildcard include/config/illegal/pointer/value.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/const.h \
++  include/linux/stat.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/stat.h \
++  include/uapi/linux/stat.h \
++  include/linux/time.h \
++    $(wildcard include/config/arch/uses/gettimeoffset.h) \
++  include/linux/cache.h \
++    $(wildcard include/config/arch/has/cache/line/size.h) \
++  include/linux/kernel.h \
++    $(wildcard include/config/preempt/voluntary.h) \
++    $(wildcard include/config/debug/atomic/sleep.h) \
++    $(wildcard include/config/prove/locking.h) \
++    $(wildcard include/config/ring/buffer.h) \
++    $(wildcard include/config/symbol/prefix.h) \
++  /usr/lib/gcc/arm-linux-gnueabi/4.6/include/stdarg.h \
++  include/linux/linkage.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/linkage.h \
++  include/linux/bitops.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/bitops.h \
++  include/linux/irqflags.h \
++    $(wildcard include/config/trace/irqflags.h) \
++    $(wildcard include/config/irqsoff/tracer.h) \
++    $(wildcard include/config/preempt/tracer.h) \
++    $(wildcard include/config/trace/irqflags/support.h) \
++  include/linux/typecheck.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/irqflags.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/ptrace.h \
++    $(wildcard include/config/arm/thumb.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/ptrace.h \
++    $(wildcard include/config/cpu/endian/be8.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/hwcap.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/hwcap.h \
++  include/asm-generic/bitops/non-atomic.h \
++  include/asm-generic/bitops/fls64.h \
++  include/asm-generic/bitops/sched.h \
++  include/asm-generic/bitops/hweight.h \
++  include/asm-generic/bitops/arch_hweight.h \
++  include/asm-generic/bitops/const_hweight.h \
++  include/asm-generic/bitops/lock.h \
++  include/asm-generic/bitops/le.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/byteorder.h \
++  include/linux/byteorder/little_endian.h \
++  include/uapi/linux/byteorder/little_endian.h \
++  include/linux/swab.h \
++  include/uapi/linux/swab.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/swab.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/uapi/asm/swab.h \
++  include/linux/byteorder/generic.h \
++  include/asm-generic/bitops/ext2-atomic-setbit.h \
++  include/linux/log2.h \
++    $(wildcard include/config/arch/has/ilog2/u32.h) \
++    $(wildcard include/config/arch/has/ilog2/u64.h) \
++  include/linux/printk.h \
++    $(wildcard include/config/printk.h) \
++    $(wildcard include/config/dynamic/debug.h) \
++  include/linux/init.h \
++    $(wildcard include/config/broken/rodata.h) \
++  include/linux/kern_levels.h \
++  include/linux/dynamic_debug.h \
++  include/linux/string.h \
++    $(wildcard include/config/binary/printf.h) \
++  include/uapi/linux/string.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/string.h \
++  include/linux/errno.h \
++  include/uapi/linux/errno.h \
++  arch/arm/include/generated/asm/errno.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/errno.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/asm-generic/errno-base.h \
++  include/uapi/linux/kernel.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/sysinfo.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/div64.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/compiler.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/bug.h \
++    $(wildcard include/config/bug.h) \
++    $(wildcard include/config/thumb2/kernel.h) \
++    $(wildcard include/config/debug/bugverbose.h) \
++    $(wildcard include/config/arm/lpae.h) \
++  include/asm-generic/bug.h \
++    $(wildcard include/config/generic/bug/relative/pointers.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/cache.h \
++    $(wildcard include/config/arm/l1/cache/shift.h) \
++    $(wildcard include/config/aeabi.h) \
++  include/linux/seqlock.h \
++  include/linux/spinlock.h \
++    $(wildcard include/config/debug/spinlock.h) \
++    $(wildcard include/config/generic/lockbreak.h) \
++    $(wildcard include/config/preempt.h) \
++    $(wildcard include/config/debug/lock/alloc.h) \
++  include/linux/preempt.h \
++    $(wildcard include/config/debug/preempt.h) \
++    $(wildcard include/config/preempt/count.h) \
++    $(wildcard include/config/preempt/notifiers.h) \
++  include/linux/thread_info.h \
++    $(wildcard include/config/compat.h) \
++    $(wildcard include/config/debug/stack/usage.h) \
++  include/linux/bug.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/thread_info.h \
++    $(wildcard include/config/crunch.h) \
++    $(wildcard include/config/arm/thumbee.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/fpstate.h \
++    $(wildcard include/config/vfpv3.h) \
++    $(wildcard include/config/iwmmxt.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/domain.h \
++    $(wildcard include/config/io/36.h) \
++    $(wildcard include/config/cpu/use/domains.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/barrier.h \
++    $(wildcard include/config/cpu/32v6k.h) \
++    $(wildcard include/config/cpu/xsc3.h) \
++    $(wildcard include/config/cpu/fa526.h) \
++    $(wildcard include/config/arch/has/barriers.h) \
++    $(wildcard include/config/arm/dma/mem/bufferable.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/outercache.h \
++    $(wildcard include/config/outer/cache/sync.h) \
++    $(wildcard include/config/outer/cache.h) \
++  include/linux/stringify.h \
++  include/linux/bottom_half.h \
++  include/linux/spinlock_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/spinlock_types.h \
++  include/linux/lockdep.h \
++    $(wildcard include/config/lockdep.h) \
++    $(wildcard include/config/lock/stat.h) \
++    $(wildcard include/config/prove/rcu.h) \
++  include/linux/rwlock_types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/spinlock.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/processor.h \
++    $(wildcard include/config/have/hw/breakpoint.h) \
++    $(wildcard include/config/mmu.h) \
++    $(wildcard include/config/arm/errata/754327.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/hw_breakpoint.h \
++  include/linux/rwlock.h \
++  include/linux/spinlock_api_smp.h \
++    $(wildcard include/config/inline/spin/lock.h) \
++    $(wildcard include/config/inline/spin/lock/bh.h) \
++    $(wildcard include/config/inline/spin/lock/irq.h) \
++    $(wildcard include/config/inline/spin/lock/irqsave.h) \
++    $(wildcard include/config/inline/spin/trylock.h) \
++    $(wildcard include/config/inline/spin/trylock/bh.h) \
++    $(wildcard include/config/uninline/spin/unlock.h) \
++    $(wildcard include/config/inline/spin/unlock/bh.h) \
++    $(wildcard include/config/inline/spin/unlock/irq.h) \
++    $(wildcard include/config/inline/spin/unlock/irqrestore.h) \
++  include/linux/rwlock_api_smp.h \
++    $(wildcard include/config/inline/read/lock.h) \
++    $(wildcard include/config/inline/write/lock.h) \
++    $(wildcard include/config/inline/read/lock/bh.h) \
++    $(wildcard include/config/inline/write/lock/bh.h) \
++    $(wildcard include/config/inline/read/lock/irq.h) \
++    $(wildcard include/config/inline/write/lock/irq.h) \
++    $(wildcard include/config/inline/read/lock/irqsave.h) \
++    $(wildcard include/config/inline/write/lock/irqsave.h) \
++    $(wildcard include/config/inline/read/trylock.h) \
++    $(wildcard include/config/inline/write/trylock.h) \
++    $(wildcard include/config/inline/read/unlock.h) \
++    $(wildcard include/config/inline/write/unlock.h) \
++    $(wildcard include/config/inline/read/unlock/bh.h) \
++    $(wildcard include/config/inline/write/unlock/bh.h) \
++    $(wildcard include/config/inline/read/unlock/irq.h) \
++    $(wildcard include/config/inline/write/unlock/irq.h) \
++    $(wildcard include/config/inline/read/unlock/irqrestore.h) \
++    $(wildcard include/config/inline/write/unlock/irqrestore.h) \
++  include/linux/atomic.h \
++    $(wildcard include/config/arch/has/atomic/or.h) \
++    $(wildcard include/config/generic/atomic64.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/atomic.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/cmpxchg.h \
++    $(wildcard include/config/cpu/sa1100.h) \
++    $(wildcard include/config/cpu/sa110.h) \
++    $(wildcard include/config/cpu/v6.h) \
++  include/asm-generic/cmpxchg-local.h \
++  include/asm-generic/atomic-long.h \
++  include/linux/math64.h \
++  include/uapi/linux/time.h \
++  include/linux/uidgid.h \
++    $(wildcard include/config/uidgid/strict/type/checks.h) \
++    $(wildcard include/config/user/ns.h) \
++  include/linux/highuid.h \
++  include/linux/kmod.h \
++  include/linux/gfp.h \
++    $(wildcard include/config/numa.h) \
++    $(wildcard include/config/highmem.h) \
++    $(wildcard include/config/zone/dma.h) \
++    $(wildcard include/config/zone/dma32.h) \
++    $(wildcard include/config/pm/sleep.h) \
++    $(wildcard include/config/cma.h) \
++  include/linux/mmzone.h \
++    $(wildcard include/config/force/max/zoneorder.h) \
++    $(wildcard include/config/memcg.h) \
++    $(wildcard include/config/compaction.h) \
++    $(wildcard include/config/memory/hotplug.h) \
++    $(wildcard include/config/sparsemem.h) \
++    $(wildcard include/config/have/memblock/node/map.h) \
++    $(wildcard include/config/discontigmem.h) \
++    $(wildcard include/config/flat/node/mem/map.h) \
++    $(wildcard include/config/no/bootmem.h) \
++    $(wildcard include/config/numa/balancing.h) \
++    $(wildcard include/config/have/memory/present.h) \
++    $(wildcard include/config/have/memoryless/nodes.h) \
++    $(wildcard include/config/need/node/memmap/size.h) \
++    $(wildcard include/config/need/multiple/nodes.h) \
++    $(wildcard include/config/have/arch/early/pfn/to/nid.h) \
++    $(wildcard include/config/flatmem.h) \
++    $(wildcard include/config/sparsemem/extreme.h) \
++    $(wildcard include/config/have/arch/pfn/valid.h) \
++    $(wildcard include/config/nodes/span/other/nodes.h) \
++    $(wildcard include/config/holes/in/zone.h) \
++    $(wildcard include/config/arch/has/holes/memorymodel.h) \
++  include/linux/wait.h \
++  arch/arm/include/generated/asm/current.h \
++  include/asm-generic/current.h \
++  include/uapi/linux/wait.h \
++  include/linux/threads.h \
++    $(wildcard include/config/nr/cpus.h) \
++    $(wildcard include/config/base/small.h) \
++  include/linux/numa.h \
++    $(wildcard include/config/nodes/shift.h) \
++  include/linux/nodemask.h \
++    $(wildcard include/config/movable/node.h) \
++  include/linux/bitmap.h \
++  include/linux/pageblock-flags.h \
++    $(wildcard include/config/hugetlb/page.h) \
++    $(wildcard include/config/hugetlb/page/size/variable.h) \
++  include/generated/bounds.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/page.h \
++    $(wildcard include/config/cpu/copy/v4wt.h) \
++    $(wildcard include/config/cpu/copy/v4wb.h) \
++    $(wildcard include/config/cpu/copy/feroceon.h) \
++    $(wildcard include/config/cpu/copy/fa.h) \
++    $(wildcard include/config/cpu/xscale.h) \
++    $(wildcard include/config/cpu/copy/v6.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/glue.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/pgtable-2level-types.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/memory.h \
++    $(wildcard include/config/need/mach/memory/h.h) \
++    $(wildcard include/config/page/offset.h) \
++    $(wildcard include/config/dram/size.h) \
++    $(wildcard include/config/dram/base.h) \
++    $(wildcard include/config/have/tcm.h) \
++    $(wildcard include/config/arm/patch/phys/virt.h) \
++    $(wildcard include/config/phys/offset.h) \
++  include/linux/sizes.h \
++  include/asm-generic/memory_model.h \
++    $(wildcard include/config/sparsemem/vmemmap.h) \
++  include/asm-generic/getorder.h \
++  include/linux/memory_hotplug.h \
++    $(wildcard include/config/memory/hotremove.h) \
++    $(wildcard include/config/have/arch/nodedata/extension.h) \
++  include/linux/notifier.h \
++  include/linux/mutex.h \
++    $(wildcard include/config/debug/mutexes.h) \
++    $(wildcard include/config/have/arch/mutex/cpu/relax.h) \
++  include/linux/mutex-debug.h \
++  include/linux/rwsem.h \
++    $(wildcard include/config/rwsem/generic/spinlock.h) \
++  include/linux/rwsem-spinlock.h \
++  include/linux/srcu.h \
++  include/linux/rcupdate.h \
++    $(wildcard include/config/rcu/torture/test.h) \
++    $(wildcard include/config/tree/rcu.h) \
++    $(wildcard include/config/tree/preempt/rcu.h) \
++    $(wildcard include/config/rcu/trace.h) \
++    $(wildcard include/config/preempt/rcu.h) \
++    $(wildcard include/config/rcu/user/qs.h) \
++    $(wildcard include/config/tiny/rcu.h) \
++    $(wildcard include/config/tiny/preempt/rcu.h) \
++    $(wildcard include/config/debug/objects/rcu/head.h) \
++    $(wildcard include/config/hotplug/cpu.h) \
++    $(wildcard include/config/preempt/rt.h) \
++  include/linux/cpumask.h \
++    $(wildcard include/config/cpumask/offstack.h) \
++    $(wildcard include/config/debug/per/cpu/maps.h) \
++    $(wildcard include/config/disable/obsolete/cpumask/functions.h) \
++  include/linux/completion.h \
++  include/linux/debugobjects.h \
++    $(wildcard include/config/debug/objects.h) \
++    $(wildcard include/config/debug/objects/free.h) \
++  include/linux/rcutree.h \
++  include/linux/workqueue.h \
++    $(wildcard include/config/debug/objects/work.h) \
++    $(wildcard include/config/freezer.h) \
++  include/linux/timer.h \
++    $(wildcard include/config/timer/stats.h) \
++    $(wildcard include/config/debug/objects/timers.h) \
++  include/linux/ktime.h \
++    $(wildcard include/config/ktime/scalar.h) \
++  include/linux/jiffies.h \
++  include/linux/timex.h \
++  include/uapi/linux/timex.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/param.h \
++  arch/arm/include/generated/asm/param.h \
++  include/asm-generic/param.h \
++    $(wildcard include/config/hz.h) \
++  include/uapi/asm-generic/param.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/timex.h \
++    $(wildcard include/config/arch/multiplatform.h) \
++  arch/arm/mach-omap2/include/mach/timex.h \
++  arch/arm/plat-omap/include/plat/timex.h \
++    $(wildcard include/config/omap/32k/timer.h) \
++    $(wildcard include/config/omap/32k/timer/hz.h) \
++  include/linux/topology.h \
++    $(wildcard include/config/sched/smt.h) \
++    $(wildcard include/config/sched/mc.h) \
++    $(wildcard include/config/sched/book.h) \
++    $(wildcard include/config/use/percpu/numa/node/id.h) \
++  include/linux/smp.h \
++    $(wildcard include/config/use/generic/smp/helpers.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/smp.h \
++  include/linux/percpu.h \
++    $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
++    $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
++    $(wildcard include/config/have/setup/per/cpu/area.h) \
++  include/linux/pfn.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/percpu.h \
++  include/asm-generic/percpu.h \
++  include/linux/percpu-defs.h \
++    $(wildcard include/config/debug/force/weak/per/cpu.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/topology.h \
++    $(wildcard include/config/arm/cpu/topology.h) \
++  include/asm-generic/topology.h \
++  include/linux/mmdebug.h \
++    $(wildcard include/config/debug/vm.h) \
++    $(wildcard include/config/debug/virtual.h) \
++  include/linux/sysctl.h \
++    $(wildcard include/config/sysctl.h) \
++  include/linux/rbtree.h \
++  include/uapi/linux/sysctl.h \
++  include/linux/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/user.h \
++  include/uapi/linux/elf.h \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/include/uapi/linux/elf-em.h \
++  include/linux/kobject.h \
++  include/linux/sysfs.h \
++  include/linux/kobject_ns.h \
++  include/linux/kref.h \
++  include/linux/moduleparam.h \
++    $(wildcard include/config/alpha.h) \
++    $(wildcard include/config/ia64.h) \
++    $(wildcard include/config/ppc64.h) \
++  include/linux/tracepoint.h \
++  include/linux/static_key.h \
++  include/linux/jump_label.h \
++    $(wildcard include/config/jump/label.h) \
++  include/linux/export.h \
++    $(wildcard include/config/modversions.h) \
++  /home/amesen/BeagleBone/linux-dev/KERNEL/arch/arm/include/asm/module.h \
++    $(wildcard include/config/arm/unwind.h) \
++  include/asm-generic/module.h \
++    $(wildcard include/config/have/mod/arch/specific.h) \
++    $(wildcard include/config/modules/use/elf/rel.h) \
++    $(wildcard include/config/modules/use/elf/rela.h) \
++
++drivers/char/examples/hello1.o: $(deps_drivers/char/examples/hello1.o)
++
++$(deps_drivers/char/examples/hello1.o):
+diff --git a/examples/Makefile b/examples/Makefile
+new file mode 100644
+index 0000000..99a62d4
+--- /dev/null
++++ b/examples/Makefile
+@@ -0,0 +1,2 @@
++
++obj-$(CONFIG_EXAMPLES) += hello1.o
+diff --git a/examples/Makefile~ b/examples/Makefile~
+new file mode 100644
+index 0000000..f791767
+--- /dev/null
++++ b/examples/Makefile~
+@@ -0,0 +1,2 @@
++all:
++	gcc hello1.c -o hello1
+diff --git a/examples/built-in.o b/examples/built-in.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..3ef1115463c9629de8373516f3c48f2f4b7ad590
+GIT binary patch
+literal 2284
+zcmah~OK%fN5U%k!#6$sw_jAFZ2!%if3?T@_VWSWpQpf>>#LXJpBQQ9&vBx4vNCd=z
+zKfoCd91sWO{Q(^IC#;aT?g6c|JS4;&5x#G_%hR@kD63rcRaMucr)T=%{K5s#^F+y$
+z2}zMiHj{XUrV}wCyJWlM{+#-lljr~aSY7=r^5R2o<?a7wePa8x9U%9Y_o&;IC&r%s
+zce~vcZ{|`|t2OfT%i&V97UeJ3tMP~oTIZK(?a{@#xwH9+>!nUT?i^dF*27jKKOM{j
+zC#MRX#CYnk!7_Usi^3=@RmD35b?EfetgIUup3QmdGn=zpy=~qOf2X(0+nw2$J?I_v
+zBxv7Xio+6Q+%oc(YOSaiRMB4$N6WDUgb^CEaQ5mIKr9)IF^+0w*>$ARP6}pBqg_X%
+z62>80Dg*@y2-5oHux1)DCU!{EOj1sQQoAidxv{hq)zNgl5l6wr#p_e;I4s|hq+A%s
+zt!k+gNA2DY|5mw#2%e2~HqxAlbeW!;xi#W;reTt``X0#jj{VD!$QbYrFpnMMa^SmQ
+zx9$S)C|F7JO~T;j`|jjpjOIH7o%zhs7P$d^t$bHaT=Ov`sRCv{x=!mZ!sgZ;#RhR+
+z&M^$ux;LS_b!)&b>He+22)$RAajdKLR6c;stvimox_^9gwC*$L%zXk(ior({&HT|v
+zercs|%<{rY6^tRh0aJJ5v?uyie+}L3ZyNn^4(`iF8%O*%*v-d2GzZk4{ua8M@0^p5
+zb8`*z{bQx}_X^l0o#Q=>)cL(2G44pBnLql-|5|CRBJWhOQuBQUM$M+W8COsMsd1a2
+zYj1RC;aH_&N#iK>tkHEI^X6gT+1d~0yqueR;^wPh6Q07Rr1@Z$y?K$XkQo53{{xtI
+zV$!4*JYf8j_CZW)0Tu>j_z)>K8~Lk$zc;ms@cSlW-?o5F;P<{R8qYT<CBN?kaJ_R!
+zAk6Q3lZiK^ixWRjUP^wlgD&nL$d@gt6PlmwUTX4XTi=9P`L^2MQKr`cpIZh$N<ITa
+z1}oy%mHw252PVu4zndg}vohE}#@ojS&0r{&Mh5b2ltb3To%ir2_SYMebAA4?0sp96
+zvwjMmzuN<t-)klM<rc5|LQt0R(C9^8STbI*h_{{;ixj-Yib;F|Vb#0MS_x-hPA>Rj
+ar+%+muN2G8X0h2iF3nc89^YBpTacdx3*>76
+
+literal 0
+HcmV?d00001
+
+diff --git a/examples/hello1.c b/examples/hello1.c
+new file mode 100644
+index 0000000..ff721ad
+--- /dev/null
++++ b/examples/hello1.c
+@@ -0,0 +1,28 @@
++/* Example Minimal Character Device Driver */
++#include <linux/module.h>
++
++static int debug_enable = 0;
++static int homework_enable = 1;
++module_param(debug_enable, int, 0);
++module_param(homework_enable, int, 1);
++MODULE_PARM_DESC(debug_enable, "Enable module debug mode, except not.");
++MODULE_PARM_DESC(homework_enable, "Can enable homework, but why would you?");
++
++static int __init hello_init(void)
++{
++    printk(KERN_INFO "Hello Example Init - debug mode is %s, homework is %s\n", debug_enable ? "enabled" : "disabled", homework_enable ? "enabled" : "disabled");
++
++    return 0;
++}
++
++static void __exit hello_exit(void)
++{
++    printk(KERN_INFO "Hello Example Exit\n");
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
++
++MODULE_AUTHOR("Chris Hallinan");
++MODULE_DESCRIPTION("Hello World Example");
++MODULE_LICENSE("GPL");
+diff --git a/examples/hello1.c~ b/examples/hello1.c~
+new file mode 100644
+index 0000000..a3be67d
+--- /dev/null
++++ b/examples/hello1.c~
+@@ -0,0 +1,27 @@
++/* Example Minimal Character Device Driver */
++#include <linux/module.h>
++
++static int debug_enable = 0;
++module_param(debug_enable, int, 0);
++module_param(homework_enable, int, 1);
++MODULE_PARM_DESC(debug_enable, "Enable module debug mode, except not.");
++MODULE_PARM_DESC(homework_enable, "Can enable homework, but why would you?");
++
++static int __init hello_init(void)
++{
++    printk(KERN_INFO "Hello Example Init - debug mode is %s, homework is %s\n", debug_enable ? "enabled" : "disabled", homework_enable ? "enabled" : "disabled");
++
++    return 0;
++}
++
++static void __exit hello_exit(void)
++{
++    printk(KERN_INFO "Hello Example Exit\n");
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
++
++MODULE_AUTHOR("Chris Hallinan");
++MODULE_DESCRIPTION("Hello World Example");
++MODULE_LICENSE("GPL");
+diff --git a/examples/hello1.ko b/examples/hello1.ko
+new file mode 100644
+index 0000000000000000000000000000000000000000..d9bbdd5bbe42e690caca05d9891c3030c9a486d9
+GIT binary patch
+literal 4774
+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
+Ynl=6S&8615dYfIeV?RG@81L$T19+LE+5i9m
+
+literal 0
+HcmV?d00001
+
+diff --git a/examples/hello1.mod.c b/examples/hello1.mod.c
+new file mode 100644
+index 0000000..36be2c3
+--- /dev/null
++++ b/examples/hello1.mod.c
+@@ -0,0 +1,35 @@
++#include <linux/module.h>
++#include <linux/vermagic.h>
++#include <linux/compiler.h>
++
++MODULE_INFO(vermagic, VERMAGIC_STRING);
++
++struct module __this_module
++__attribute__((section(".gnu.linkonce.this_module"))) = {
++	.name = KBUILD_MODNAME,
++	.init = init_module,
++#ifdef CONFIG_MODULE_UNLOAD
++	.exit = cleanup_module,
++#endif
++	.arch = MODULE_ARCH_INIT,
++};
++
++MODULE_INFO(intree, "Y");
++
++static const struct modversion_info ____versions[]
++__used
++__attribute__((section("__versions"))) = {
++	{ 0x17634745, "module_layout" },
++	{ 0x15692c87, "param_ops_int" },
++	{ 0xefd6cf06, "__aeabi_unwind_cpp_pr0" },
++	{ 0x2e5810c6, "__aeabi_unwind_cpp_pr1" },
++	{ 0x27e1a049, "printk" },
++};
++
++static const char __module_depends[]
++__used
++__attribute__((section(".modinfo"))) =
++"depends=";
++
++
++MODULE_INFO(srcversion, "96D62C33E0B6B57B9D0904F");
+diff --git a/examples/hello1.mod.o b/examples/hello1.mod.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..b54a93b6596537df37461621c16473c8149c1bd2
+GIT binary patch
+literal 2140
+zcmeHIOHbQC5FW?j*@u9F=tHW~hYA(2O$Y?26p26rLJg=7MQSfyHujcSIJRrAp`18!
+z=s)PGhaP(D59qnq-g>Xpd(~gi&c<HiR4L>KbfxvoH}mc8?0RSRxKiEFG!0bKU>e#8
+zAe(M^`W9MZ8ZN^H2z=v!`+?;;#g#(2Fu$J9SF&q`wZ)~im2!3^yRZQ!_qbyQMX(&<
+zb6$J_IHJk+ETfnw%Osbd$voSBoN2ly4ISHMrc~oegG}k^_Q6udn?G32$Ym>=#w5B!
+zn^T(|xuIyq();IR)|&8`&zjWr0*Vp!KD5Q`|N8AGrHr$>h0z{bj!6yAqn@AbZK5wD
+z&q>$ux!%Taz5hPt`55<pZ~U`Z4Q|_RkL#W_&wpQ+6WCl|f0&uB)k8;w52}{Kd^fW|
+z3M4<53tPs;`w@ncygIEL1=>AS`<CWP&_6s-8q|hTW9e~iLYvgDYS*;ushjEB+N=g7
+zIBE)3M=AVBHk2m#8v(>*f&r-q0T4_U%X#Gjr7ER>_}nIYPDpIa*>@d-6Vb2&8l@Ew
+z!)-P>CI)d_!O7-MZ7vYZ*aw2CNSF}5RSyLZy6pKMrW<INb)-M`NA;skRyF2U%+t@|
+zO`(4f`+2<Cc)nC(zGkdTq1IiDb;bLDcvU%3kIEiEIp(Q#e;}vPg|~{lA?&JEG1w6V
+z7qQDTkn_p-Ut*WTRq3eW#50IhlRnw^VyWzhDuCFaLO4W>E-%STrnlmaMm$A>k2vV$
+z6t&Mq^3|D0_bvwi7>$=uAHy#9A@?QsnhfdF0Khx6sixLdSjnV44ZnUXyOjFr--)bx
+zM<mjpTv6gQzDH5JgF-_rlS%3_K8cr5$~&R(Bh=-;U&b!|$)-aeu%rR88RJz9Ttl2}
+zI{w*CzPjxZOYgW5GG2KD+D(UHcpXD|r$%wU<F>nX&Ts$15EXEl;>5rNukCC-sa5D!
+znYLf$d9=sxW&93z5ThqK*I`qya~AHJ=tvX}N|S}cax9^WhGBE&gr0%`pE1_d6@Xpb
+IOKKe84?)4$=l}o!
+
+literal 0
+HcmV?d00001
+
+diff --git a/examples/hello1.o b/examples/hello1.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..1c5c559f59a54838dca88c7fab331bbe7c592764
+GIT binary patch
+literal 3292
+zcmai0-D@0G6hE`GZPThHjs3PQqqGuhGA3<WOChE)iD@O4Rt$nD<LvHerrn)cc4tX~
+zLaPW0_MzxYL9uzzw-zD@f>Q7g@J)U8p#;A`=!37u-*4vL-8+*O58OHDcRubp_jB%*
+znYkA%%MwkN3`!4)T(?uprm>U_%0Ahh+WXE7|1malb8Sq}oSSRX|LNKYu*k)`^27DD
+zLFh~UE0*2AvP0zcySB5k<KOl5zeHB<_FcX6yUy3A1UO0G*VcQhtMY-iW&GwE;{JS5
+zDOXoluWGv`>+6*JwL;;AxDhPIt;=2z`IUMgwV={@TZ4L74Wf21K6_yfhIX|THj^-p
+z#?J=zdhEO!x9T-#X31|f5$Jc4g}607wa^ON&RM@+4<kR4rr&Ce7jm4Q@*^ip=V;TA
+zQ|Tnm;=;1C7<bU?a@?87g3W?X&!j~<jkwmS2Tp1t2!@<ssTwpBCyEm{jZ2oB!G^?P
+zl=O_bj%mqCs!1(ub1G_Loy-QRhUlD&!o(Ri(mELGk@iq`6dB&OA#i3XOty*4PEDP5
+z2IniCDCs;ihxuv6&X{}BJw80zNtGv_%CJn1V43{DuY_Vf331c2!;`Xk+m^{bYints
+zywloc?XmY-`>g$?L**x|Axqr$awG98;7Kdv3tFoAi7#%Y-4?eM)ZGxHaFbvu5qI+C
+zms|*b#Z=NKGlaFJq9MRYHUt~Wd~n|2dDsnp169OXNm#isdMnlnmOko^id&5vjQ|Vc
+zVl@MI_Wb;CJMpWRvwHm`X@%G<LA$$?|4*2P1JCJZ<(Qq%UX(t=k14<G7>m%a+;i*7
+zk3+|^sQpeoz;6P2GcWyKLDQuB<_d4sO7Q82MYsX>pwWko`A(p*zY-eh8X8=?r29J$
+z4g8w#E6WXV#%sIgyeG`O2|C*g9rJEc{)~GU%^b%H@cr^up*Q=x1}EM(?2mdqjuvEd
+z9Jhc?qK))1nmG>ou^yd6kK;o_2T?vZ@<Qz9{Sva7_ZwgbO_T0#1qz*mwp-{#ug7*^
+zJr34m_V+XJK{QRYk(kHyy9fL?4T`ki9bn4Gl>S$MH<e6A8{3bHvnJ96HpJ7Jn0~e2
+zFF=$vUD6vzDYOkgBJSm;={KqYxc1|JNAG!>KSO{2P*9}($jwws*i8Kh<lbVPoImah
+z&av6wN4O)u*PXy-h(J9u^<}x2{@1kCE=1Y6N|?{gNL&`AHK;6)D8#c`f}M4rQM#=9
+zE<pU|)ZWwRTPD-kI7y7}5l>c+Y|KJF|5o8WMB?5p!OnQ@`;5$;$@(AChLqcg%I9M*
+zJ+ftc!M<I1|B$#Q7VOWZNaKEaO<}H^g^DhL(^vanQ8MSvg7yYDDf2JRH=}xF%MSTU
+zK~`!3e+N$4QTQkDA++5J{|5d%+PK1HYzWqHO5sDm-$LeDWPcODJe&I!2J4b71BLl0
+z6>zcso!wXpwme$EyW|bz)5Ou%3izD@{zPH!w*k!B7YcI@2C)9O3;wde_t&UfmBW4}
+zd;F=(;hIAH?~3}}disf_A9Y%fzwHLwgM7`mQnzDvkTc|f=gpr#cX58kJ2&mAcjQTg
+z_LRnh@<h&%y(GtSx<X;cb4D}ov7Dt4#z*03&cO_&bwrviyag}ADSdu<ooF$PYF@S3
+z^qMWk-bXzmoPIBRl}fc9_)({+VfyCr;$|Cblw@y;1GogwU~Nk{Ak*a7VrR*Zh|DQ|
+zL2)oSx`|&94gt^9QCtD!2hk7j1;&w%>WgbQ!=(e6Uui_$CCJ15NIiEk^$^oK{sXf3
+B>}3D|
+
+literal 0
+HcmV?d00001
+
+diff --git a/examples/hello1.patch b/examples/hello1.patch
+new file mode 100644
+index 0000000..e69de29
+diff --git a/examples/modules.builtin b/examples/modules.builtin
+new file mode 100644
+index 0000000..5cd431a
+--- /dev/null
++++ b/examples/modules.builtin
+@@ -0,0 +1 @@
++kernel/drivers/char/examples/hello1.ko
+diff --git a/examples/modules.order b/examples/modules.order
+new file mode 100644
+index 0000000..5cd431a
+--- /dev/null
++++ b/examples/modules.order
+@@ -0,0 +1 @@
++kernel/drivers/char/examples/hello1.ko
+-- 
+1.7.9.5
+
