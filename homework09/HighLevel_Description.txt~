@@ -1,0 +1,13 @@
+1------
+As mentioned before, matrixLED.js uses a connect() function defined within itself to link with the browser. The critical piece here is the io socket, which we can see also used in boneServer.js to a similar purpose, that is communication with the browser for passing input/output data.
+
+More specifically, the majority of the boneServer.js are a series of socket.on() functions, each given two params of 1) a string name and 2) a subfunction function().
+
+2------
+It appears that as a user pressed the LED buttons in the browser, a text version of the matrix configuration is sent back to the bone, which uses that to update the matrix column by column.
+
+3------
+If by the LED color, you mean the color of the LED symbols in the browser, that is defined in the .on{}.
+
+4------
+
