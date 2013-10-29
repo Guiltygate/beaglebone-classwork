@@ -1,7 +1,1 @@
-I had originally run the rebuild command and piped the new kernel over to the Beagle, 
-but I apparently I overwrote the listing with an older one, so I tried to rebuild
-again.
-
-However, despite having built and rebuilt the kernel, I can no longer execute either
-command successfully for some reason. I will probably delete my local repo and 
-redownload everything and try building the kernel again tonight when I go to bed.
+Despite having already built the kernel once (and installed it on an SD card, and having successfully booted from said SD card) I seem unable to make the kernel a second time. Is this normal? I'll look into this over break, as the next homework requires it. Probably should delete my local repo and redownload it.

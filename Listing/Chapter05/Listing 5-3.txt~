@@ -1,8 +1,6 @@
-I originally had the boot sequence, but apparently I overwrote it with an older
-Listing by mistake. Since I don't have the proper cable on me, I'm submitting this
-for now. Below is a boot read that I took from the eLinux wiki as a placeholder.
+I had issues grabbing the boot messages myself, and am currently working on it. If this text is still here, that means I probably wasn't able to.
 
-On the left you can see the time at which the action on the right is taking place, showing us this portion of the kernel startup takes about 1.8 seconds total (see final time stamp).
+On the left you can see the time at which the action on the right is taking place, showing us the entire kernel startup takes about 1.8 seconds (for this segment).
 
 Starting kernel ...
 
