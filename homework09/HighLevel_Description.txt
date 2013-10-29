@@ -13,4 +13,5 @@ If by the LED color, you mean the color of the LED symbols in the browser, that 
 It seems that all the work that needs to be done will take place in matrixLED.js. With some changes to the function matrix(data) and some GUI work for the browser, should be done. Probably harder than it sounds though.
 
 5------
-Nope, no changes made to boneServer.js
+Nope, no changes made to boneServer.js.
+

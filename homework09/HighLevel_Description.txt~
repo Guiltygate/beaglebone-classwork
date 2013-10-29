@@ -10,4 +10,7 @@ It appears that as a user pressed the LED buttons in the browser, a text version
 If by the LED color, you mean the color of the LED symbols in the browser, that is defined in the .on{}.
 
 4------
+It seems that all the work that needs to be done will take place in matrixLED.js. With some changes to the function matrix(data) and some GUI work for the browser, should be done. Probably harder than it sounds though.
 
+5------
+Nope, no changes made to boneServer.js.
