@@ -23,12 +23,13 @@ var decoder = lame.Decoder();
 //Read in preset directory for processing of .mp3's
 var mountpath = '/mnt/server_media/';
 var files = fs.readdirSync(mountpath + '.'),
-	songs = [];
+	songs = [],
+	songlist = [];
 
 console.log(files);
 
 files.forEach(function(file){
-	if(path.extname(file) === '.mp3'){songs.push(mountpath + file)}
+	if(path.extname(file) === '.mp3'){songs.push(mountpath + file); songlist.push(file);}
 });	
 
 console.log(songs);
@@ -81,7 +82,7 @@ io.sockets.on('connection', function (socket) {
     console.log("Connection " + socket.id + " accepted.");
 
 
-    socket.on('playcurrentlist', function(){
+    socket.on('playCurrentList', function(){
 		console.log("Playing...");
 		async.eachSeries(songs, function(song, done){
 			var speaker = new Speaker(audioOptions);
@@ -95,6 +96,8 @@ io.sockets.on('connection', function (socket) {
 			});
 		});
 	});
+	
+	socket.on('getCurrentList', function(){console.log("Received playlist call!"); socket.emit('txCurrentList', songlist);});
 
     connectCount++;
     console.log("connectCount = " + connectCount);
