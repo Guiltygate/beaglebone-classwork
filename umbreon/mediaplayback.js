@@ -15,24 +15,9 @@ function connect(){
 
 //Button 1, to play a song (testing)
 function play(){
-	socket.emit('testIO');
+	socket.emit('playcurrentlist');
 }
 
-//Button2, to play a predetermined song (testing purposes)
-
-
-//Button 3, for downloading a file
-function capture(){
-
-	document.getElementById("test").innerHTML="New version.";
-
-
-}
-
-//Button 4, for testing random functions
-function testingAround(){
-	console.log("Met requirements!");
-}
 
 connect();
 

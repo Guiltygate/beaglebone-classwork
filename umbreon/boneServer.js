@@ -26,6 +26,8 @@ decoder.on('format', function(format) {decoder.pipe(encoder);});
 //Read in current directory for processing
 var files = fs.readdirSync('.');
 
+console.log(files);
+
 var songs = files.forEach(function(file){
 	return path.extname(file) === '.mp3';
 });	
