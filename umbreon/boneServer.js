@@ -29,7 +29,7 @@ var files = fs.readdirSync('.');
 console.log(files);
 
 var songs = files.forEach(function(file){
-	return path.extname(file) === '.mp3';
+	if(path.extname === 'mp3'){return file;}
 });	
 
 console.log(songs);
