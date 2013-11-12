@@ -11,16 +11,25 @@ var port = 8080, // Port to listen on
     errCount = 0;	// Counts the AIN errors.
 
 	var lame = require('lame'),
-		Speaker = require('speaker');
+		Speaker = require('speaker'),
+		async = require('async');
  
 //Encoder and Decoder
-var encoder = lame.Encoder({channels: 2, bitDepth: 16, sampleRate: 44100});
+var audioOptions = {channels: 2, bitDepth: 16, sampleRate: 44100};
+var encoder = lame.Encoder(audioOptions);
 encoder.on("data", function(data) {sendData(data);});
 
 var decoder = lame.Decoder();
 decoder.on('format', function(format) {decoder.pipe(encoder);});
 
-		
+//Read in current directory for processing
+var files = fs.readdirSync('.');
+
+var songs = files.forEach(function(file){
+	return path.extname(file) === '.mp3';
+});	
+
+console.log(songs);
 
 
 function send404(res) {
@@ -46,10 +55,12 @@ server = http.createServer(function (req, res) {
     });
 });
 
+
 server.listen(port);
 console.log("Listening on " + port);
 
-// socket.io, I choose you
+
+//socket.io events
 var io = require('socket.io').listen(server);
 io.set('log level', 2);
 
@@ -57,13 +68,20 @@ io.set('log level', 2);
 io.sockets.on('connection', function (socket) {
 
     console.log("Connection " + socket.id + " accepted.");
-//    console.log("socket: " + socket);
 
-    // now that we have our connected 'socket' object, we can 
-    // define its event handlers
 
-    socket.on('testIO', function(){
-		console.log("Worked!");
+    socket.on('playCurrentList', function(){
+		console.log("Playing...");
+		async.eachSeries(songs, function(song, done)){
+			var speaker = new Speaker(audioOptions);
+			var inputStream = fs.createReadStream(song);
+			
+			inputStream.pipe(decoder).pipe(speaker);
+			
+			speaker.on('finish', function(){
+				done();
+			});
+		});
 	});
 
     connectCount++;
