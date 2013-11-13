@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Umbreon Media Center</title>
+    <title>Umbreon Media Controller</title>
     <link rel="shortcut icon" href="/fav.ico">
 	
     <script src="/socket.io/socket.io.js"></script>
@@ -16,18 +16,12 @@
     <a href="http://eLinux.org/ECE497_Project_Music_Server" 
 target="_blank">
         <img src="uLogo.jpg" width=400 align="right"></a>
-    <i>By Eric Ames and David Cooper</i>
+    <i>By Eric Ames</i>
     <p/>
     	<button id="player" onClick='play()'>Start Playlist</button>
     	<button id="getList" onClick='getPlayList()'>View Playlist</button>
     <p/>
 	
-	<span id="status" />
-	<img id="uploadedSong" />
-	
-        <form method="POST", action="/upload", enctype="multipart/form-data">
-            <input type="file", name="newSong" />
-            <input type="submit", value="Submit Song!"/>
 	
 	<table id="playList">
 	</table>

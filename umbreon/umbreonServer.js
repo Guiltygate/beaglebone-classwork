@@ -9,9 +9,16 @@ var express = require('express'),
 	path = require('path'),
 	url = require('url'),
 	fs = require('fs'),
-	connectCount = 0;
+	connectCount = 0,
+	currentstream;
 	
-	
+var mountpath = '/mnt/server_media/';
+
+var files = [],
+	songs = [],
+	songlist = [],
+	vidoes = [];	
+
 //============Audio dependencies======================
 var lame = require('lame'),
 	Speaker = require('speaker'),
@@ -22,6 +29,24 @@ var audioOptions = {channels: 2, bitDepth: 16, sampleRate: 44100};
 var decoder = lame.Decoder();
 //======================================================
 
+function setPlaylist(){
+	songs = [];
+	files = fs.readdirSync(mountpath + '.');
+
+	files.forEach(function(file){
+		if(path.extname(file) === '.mp3'){
+			songs.push(mountpath + file);
+		}
+	});	
+}
+
+function viewPlaylist(){
+	songlist = [];
+	songs.forEach(function(song){
+		songlist.push(song);
+	});
+}
+
 	
 server.listen(8080);
 
@@ -31,37 +56,20 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.logger('dev'));
 
-app.use(express.bodyParser({keepExtensions:true, uploadDir: 'uploads' }));
 app.use(express.static(__dirname + '/'));
-app.use(express.limit('5mb'));
+
+app.use(express.bodyParser({ keepExtensions: true, uploadDir: "/mnt/server_media" }));
+
+app.post("/upload", function (request, response) {
+	 console.log("file path: ", request.files.file.path);
+	 response.end("upload complete");
+});
+
 
 app.get('/', function(req, res){
 	res.render('index', {title:'Home'});
 	});
-	
-app.get('/upload', function(req, res){
-  res.send('<form method="post" enctype="multipart/form-data">'
-    + '<p>Image: <input type="file" name="image" /></p>'
-    + '<p><input type="submit" value="Upload" /></p>'
-    + '</form>');
-});
 
-app.post('/', function(req, res, next){
-
-  // connect-form adds the req.form object
-  // we can (optionally) define onComplete, passing
-  // the exception (if any) fields parsed, and files parsed
-  req.form.complete(function(err, fields, files){
-    if (err) {
-      next(err);
-    } else {
-      console.log('\nuploaded %s to %s'
-        ,  files.image.filename
-        , files.image.path);
-      res.redirect('back');
-    }
-  });
-});
 //==========================================================================
 
 
@@ -84,13 +92,17 @@ io.sockets.on('connection', function (socket) {
 			inputStream.pipe(decoderNew).pipe(speaker);
 			
 			speaker.on('close', function(){
-				console.log("Finished a file!");
+				console.log("Finished a song!");
 				done();
 			});
 		});
 	});
 	
-	socket.on('getCurrentList', function(){console.log("Received playlist call!"); socket.emit('txCurrentList', songlist);});
+	socket.on('getCurrentList', function(){
+		console.log("Received playlist call!");
+		viewPlaylist();
+		socket.emit('txCurrentList', songlist);
+	});
 
     connectCount++;
     console.log("connectCount = " + connectCount);
@@ -99,15 +111,8 @@ io.sockets.on('connection', function (socket) {
 
 
 //========================Songlist Processing===============================
-var mountpath = '/mnt/server_media/';
-var files = fs.readdirSync(mountpath + '.'),
-	songs = [],
-	songlist = [];
 
-
-files.forEach(function(file){
-	if(path.extname(file) === '.mp3'){songs.push(mountpath + file); songlist.push(file);}
-});	
+setPlaylist();
 
 //==========================================================================
 	
