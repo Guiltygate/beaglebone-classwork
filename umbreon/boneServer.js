@@ -61,15 +61,8 @@ server = http.createServer(function (req, res) {
 
 server.listen(port);
 console.log("Listening on " + port);
-/**
-var speaker1 = new Speaker(audioOptions);
-var speaker2 = new Speaker(audioOptions);
 
-var stream1 = fs.createReadStream(songs[3]); //loads vampires
-var stream2 = fs.createReadStream(songs[0]); //loads shoes
 
-stream1.pipe(decoder).pipe(speaker1); //streams vampires
-**/
 //socket.io events
 var io = require('socket.io').listen(server);
 io.set('log level', 2);
@@ -81,7 +74,7 @@ io.sockets.on('connection', function (socket) {
 
     console.log("Connection " + socket.id + " accepted.");
 
-
+	//Big thanks to TooTallNate of the nodejs community, your modules are pretty badass.
     socket.on('playCurrentList', function(){
 		console.log("Playing...");
 		async.eachSeries(songs, function(song, done){
@@ -102,4 +95,37 @@ io.sockets.on('connection', function (socket) {
     connectCount++;
     console.log("connectCount = " + connectCount);
 });
+
+
+//THE FOLLOWING CODE IS NOT MY OWN
+//It is used to handle uploaded files
+//Link here: http://stackoverflow.com/questions/16534892/multipart-file-uploads-using-nodejs
+
+var express = require("express"),
+	app = express();
+	
+// tell express to use the bodyParser middleware and set upload directory
+app.use(express.bodyParser({ keepExtensions: true, uploadDir: "/mnt/server_media" }));
+app.engine('jade', require('jade').__express);
+
+app.post("/upload", function (request, response) {
+	// request.files will contain the uploaded file(s),
+	// keyed by the input name (in this case, "file")
+	
+	// show the uploaded file name   
+	console.log("file name", request.files.file.name);
+	console.log("file path", request.files.file.path);
+	
+	response.end("upload complete"); 
+});
+	
+// render file upload form 
+app.get("/", function (request, response) {
+	response.render("boneServer.html");
+});
+	
+app.listen(8080);	
+	
+	
+	
 
