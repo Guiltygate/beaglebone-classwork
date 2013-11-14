@@ -17,12 +17,17 @@
 target="_blank">
         <img src="uLogo.jpg" width=400 align="right"></a>
     <i>By Eric Ames</i>
+    <p/>       	
+       	<img src="plus.png" width=100 onClick='getDirectory()'>
+       	<img src="play.png" width=200 onClick='play()'>
+		<img src="minus.png" width=100 onClick='getPlayList()'>
     <p/>
-    	<button id="player" onClick='play()'>Start Playlist</button>
-    	<button id="getList" onClick='getPlayList()'>View Playlist/Remove Songs</button>
-       	<button id="directory" onClick='getDirectory()'>View Directory/Add Songs</button>
-    <p/>
+    <p>
+       	<button id="stop" onClick='stopPlaylist()'>Stop Current Playlist</button>
+       	<button id="load" onClick='loadDrive()'>Load Media</button>
+    </p>
 	
+	<h2 id='currentTrack' align='right'></h2>
 	
 	<table id="currentlist">
 	</table>
@@ -32,6 +37,9 @@ target="_blank">
         <img src="RoseLogo96.png" width=200></a>
     <br/>
     <p/>
+    <span id="addresses">
+    name: <input id="i2cNum" type="text" value="">
+    </span>
 
 	</body>
 </html>

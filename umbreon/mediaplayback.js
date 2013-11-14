@@ -2,7 +2,8 @@
 var socket,
 	firstconnect = true,
 	size,
-	listTable;
+	listTable,
+	name;
 //---------------------------------------------------
 
 function connect(){
@@ -37,6 +38,10 @@ function connect(){
 			$('#currentlist').replaceWith(listTable)
 		});
 		
+		socket.on('currentTrack', function(currentTrack){
+			$('#currentTrack').replaceWith("<h2 id='currentTrack' align='right'>"+currentTrack+"</h2>")
+		});
+		
 		
 		firstconnect = false;
 	}else{
@@ -58,12 +63,24 @@ function getDirectory(){
 	socket.emit('getDirectory');
 }
 
+function loadDrive(){
+	socket.emit('loadDrive');
+}
+
+function stopPlaylist(){
+	socket.emit('stopPlaylist');
+}
+
 function removeSong(songNum){
 	socket.emit('removeSong', songNum);
 }
 
 function addSong(songNum){
 	socket.emit('addSong', songNum);
+}
+
+function giveName(){
+	socket.emit('giveName', name);
 }
 
 connect();

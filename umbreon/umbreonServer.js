@@ -10,8 +10,11 @@ var express = require('express'),
 	url = require('url'),
 	fs = require('fs'),
 	connectCount = 0,
-	currentstream,
-	streamGoing = false;
+	child_process = require('child_process'),
+	halt = false,
+	i=0,
+	name = 'bugger';
+	
 	
 var mountpath = '/mnt/server_media/';
 
@@ -20,6 +23,7 @@ var dirfiles = [],
 	songlist = [],
 	setlist = [],
 	mp3files,
+	tracklist = [];
 	vidoes = [];	
 
 //============Audio dependencies======================
@@ -30,6 +34,7 @@ var lame = require('lame'),
 //Decoder
 var audioOptions = {channels: 2, bitDepth: 16, sampleRate: 44100};
 var decoder = lame.Decoder();
+var speaker = new Speaker(audioOptions);
 //======================================================
 
 //Read in all directory files, and put only .mp3s into mp3list
@@ -46,9 +51,11 @@ function readDirectory(){
 
 //set the song list that's actually played
 function setPlaylist(){
-	playlist = [];
+	playlist = [],
+	tracklist = [];
 	setlist.forEach(function(song){
 		playlist.push(mountpath + song);
+		tracklist.push(song);
 	});
 }
 
@@ -59,7 +66,6 @@ function setList(){
 		setlist.push(song);
 	});
 }
-
 	
 server.listen(8080);
 
@@ -75,6 +81,7 @@ app.use(express.bodyParser({ keepExtensions: true, uploadDir: "/mnt/server_media
 
 app.post("/upload", function (request, response) {
 	 console.log("file path: ", request.files.file.path);
+	 request.files.file.name = name;
 	 response.end("upload complete");
 });
 
@@ -97,24 +104,30 @@ io.sockets.on('connection', function (socket) {
 
 	//Big thanks to TooTallNate of the nodejs community, your modules are pretty badass.
     socket.on('playCurrentList', function(){
-    	if(streamGoing){currentStream.end(); streamGoing = true;}
 		setPlaylist();
-
+		if(playlist.length === 0){
+    		return;
+    	}
 		
 		console.log("Beginning playback...");
+		halt = false;
+		i=0;
 		
 		async.eachSeries(playlist, function(song, done){
-			var speaker = new Speaker(audioOptions);
-			currentStream = fs.createReadStream(song);
-			var decoderNew = lame.Decoder();
-			currentStream.pipe(decoderNew).pipe(speaker);
-			
-			speaker.on('close', function(){
-				console.log("Finished a song!");
-				done();
-			});
+			if(!halt){
+				speaker = new Speaker(audioOptions);
+				currentStream = fs.createReadStream(song).pipe(new lame.Decoder).pipe(speaker);
+				socket.emit('currentTrack', tracklist[i]);
+				i++;
+				speaker.on('close', function(){
+					done();
+				});
+			}
 		});
-		streamGoing = false;
+	});
+	
+	socket.on('stopPlaylist', function(){
+		halt = true;
 	});
 	
 	socket.on('getCurrentList', function(){
@@ -139,6 +152,17 @@ io.sockets.on('connection', function (socket) {
 		setlist.push(mp3list[songNum]);
 		socket.emit('directoryList', mp3list);
 	});
+	
+	socket.on('loadDrive', function(){
+	console.log("Loading new drive...");
+		child_process.exec('mount -t vfat -o rw /dev/sda1 /mnt/server_media');
+		mp3list = [],
+		setlist = [];
+	});
+	
+	socket.on('giveName', function(newName){
+		name = newName;
+	});
 
     connectCount++;
     console.log("connectCount = " + connectCount);
@@ -150,6 +174,11 @@ io.sockets.on('connection', function (socket) {
 
 readDirectory();
 setList();
+setPlaylist();
+var currentStream;
+
+
+
 
 //==========================================================================
 	
