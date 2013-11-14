@@ -1,4 +1,4 @@
-Readme for the Umbreon Media Controller.
+<h1>Readme for the Umbreon Media Controller.</h1>
 
 Simple nodejs express web server that allows devices on the server's network
 to play mp3 files through the server device (my case case, a beaglebone
