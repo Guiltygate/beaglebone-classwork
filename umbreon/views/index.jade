@@ -5,4 +5,7 @@ include boneServer.html
 
 form(method="POST", action="/upload", enctype="multipart/form-data")
             input(type="file", name="file")
-            input(type="submit" onClick="giveName()")
+            input(type="submit", onClick="giveName();")
+            
+form(method="GET", action='/download', enctype='multipart/form-data')
+            input(type='submit', value='Download', name='download')

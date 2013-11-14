@@ -23,7 +23,6 @@ var dirfiles = [],
 	songlist = [],
 	setlist = [],
 	mp3files,
-	tracklist = [];
 	vidoes = [];	
 
 //============Audio dependencies======================
@@ -52,10 +51,8 @@ function readDirectory(){
 //set the song list that's actually played
 function setPlaylist(){
 	playlist = [],
-	tracklist = [];
 	setlist.forEach(function(song){
 		playlist.push(mountpath + song);
-		tracklist.push(song);
 	});
 }
 
@@ -82,7 +79,11 @@ app.use(express.bodyParser({ keepExtensions: true, uploadDir: "/mnt/server_media
 app.post("/upload", function (request, response) {
 	 console.log("file path: ", request.files.file.path);
 	 request.files.file.name = name;
-	 response.end("upload complete");
+	 response.end("Upload Complete.");
+});
+
+app.get("/download", function(req, res) {
+	 res.download(playlist[i]);
 });
 
 
@@ -111,13 +112,14 @@ io.sockets.on('connection', function (socket) {
 		
 		console.log("Beginning playback...");
 		halt = false;
-		i=0;
+		i=-1;
 		
 		async.eachSeries(playlist, function(song, done){
 			if(!halt){
+				i++;
 				speaker = new Speaker(audioOptions);
 				currentStream = fs.createReadStream(song).pipe(new lame.Decoder).pipe(speaker);
-				socket.emit('currentTrack', tracklist[i]);
+				socket.emit('currentTrack', path.basename(playlist[i]));
 				i++;
 				speaker.on('close', function(){
 					done();
