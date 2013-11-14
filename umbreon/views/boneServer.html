@@ -13,17 +13,18 @@
   <body>
 
     <h1>Umbreon Media Center</h1>
-    <a href="http://eLinux.org/ECE497_Project_Music_Server" 
+    <a href="http://eLinux.org/ECE497_Project_Music_Controller" 
 target="_blank">
         <img src="uLogo.jpg" width=400 align="right"></a>
     <i>By Eric Ames</i>
     <p/>
     	<button id="player" onClick='play()'>Start Playlist</button>
-    	<button id="getList" onClick='getPlayList()'>View Playlist</button>
+    	<button id="getList" onClick='getPlayList()'>View Playlist/Remove Songs</button>
+       	<button id="directory" onClick='getDirectory()'>View Directory/Add Songs</button>
     <p/>
 	
 	
-	<table id="playList">
+	<table id="currentlist">
 	</table>
 	
 	<p></p>
