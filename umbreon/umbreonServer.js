@@ -100,6 +100,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('getCurrentList', function(){
 		console.log("Received playlist call!");
+		songlist = [];
 		viewPlaylist();
 		socket.emit('txCurrentList', songlist);
 	});

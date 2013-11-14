@@ -12,15 +12,18 @@ function connect(){
 		socket.on('txCurrentList', function(playList){
 		
 			size = playList.length;
-	
+			listTable = "<table id='playList'><tr><th>Current Playlist</th></tr>";	
 			for(var i=0; i<size; i++){
 				listTable += '<tr><td>';
 				listTable += playList[i];
 				listTable += '</td></tr>';		
-			}
-
-			$('#playList').append(listTable)
+			}			
+			listTable+="</table>";
+			$('#playList').replaceWith(listTable)
 		
+		});
+		
+		socket.on('', {
 		});
 		
 		firstconnect = false;
