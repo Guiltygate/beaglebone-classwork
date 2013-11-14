@@ -5,8 +5,13 @@ Simple nodejs express web server that allows devices on the server's network
 to play mp3 files through the server device (my case case, a beaglebone
 hdmi port).</p>
 
-Invoke using ./startServer.sh will automatically mount whatever usb device is
-present at /dev/sda1
+Invoking with
+
+ ./startServer.sh
+ 
+will automatically mount whatever usb device is present by running
+
+ mount -t vfat -o rm /dev/sda1 /mnt/server_media
 
 Invoking with 'node umbreonServer.js' will just start the server, without
 mounting server_media.
