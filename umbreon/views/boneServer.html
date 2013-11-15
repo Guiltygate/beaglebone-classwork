@@ -7,6 +7,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="mediaplayback.js"></script>
     <script src="jquery.js"></script>
+    <script src="dropzone.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
@@ -15,20 +16,22 @@
     <h1>Umbreon Media Center</h1>
     <a href="http://eLinux.org/ECE497_Project_Music_Controller" 
 target="_blank">
-        <img src="uLogo.jpg" width=400 align="right"></a>
+        <img src="uLogo.jpg" width=350 align="right"></a>
     <i>By Eric Ames</i>
     <p/>       	
-       	<img src="back.png" width=100>
-       	<img src="play.png" width=150 onClick='play()'>
-		<img src="forward.png" width=100>
+       	<img src="back.png" width=85 >
+       	<img src="play.png" width=125 onClick='play()'>
+		<img src="forward.png" width=85 onClick='skipForward()'>
     <p/>
     <p>
-        <img src="plus.png" width=100 onClick='getDirectory()'>
-        <img src="stop.png" width=100 onClick='stopPlaylist()'>
-        <img src="minus.png" width=100 onClick='getPlayList()'>
+        <img src="plus.png" width=85 onClick='getDirectory()'>
+        <img src="stop.png" width=125 onClick='stopPlaylist()'>
+        <img src="minus.png" width=85 onClick='getPlayList()'>
     </p>
     <p>
        	<button id="load" onClick='loadDrive()'>Load Media</button>
+       	<button id='up' onClick='turnUp()'>Sound +</button>
+       	<button id='down' onClick='turnDown()'>Sound -</button>
     </p>
 	
 	<h2 id='currentTrack' align='right'></h2>

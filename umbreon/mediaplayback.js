@@ -67,6 +67,22 @@ function loadDrive(){
 	socket.emit('loadDrive');
 }
 
+function skipForward(){
+	socket.emit('skipForward');
+}
+
+function skipBack(){
+	socket.emit('skipBack');
+}
+
+function turnUp(){
+	socket.emit('turnUp');
+}
+
+function turnDown(){
+	socket.emit('turnDown');
+}
+
 function stopPlaylist(){
 	socket.emit('stopPlaylist');
 }

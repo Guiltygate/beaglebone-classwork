@@ -12,7 +12,9 @@ var express = require('express'),
 	connectCount = 0,
 	child_process = require('child_process'),
 	halt = false,
+	firstplay = true;
 	i=0,
+	volume = 30,
 	name = 'bugger';
 	
 	
@@ -62,6 +64,13 @@ function setList(){
 	mp3list.forEach(function(song){
 		setlist.push(song);
 	});
+}
+
+//Stop current stream from playing
+function stop(){
+	halt = true;
+	currentStream.end();
+	speaker.end();
 }
 	
 server.listen(8080);
@@ -120,7 +129,6 @@ io.sockets.on('connection', function (socket) {
 				speaker = new Speaker(audioOptions);
 				currentStream = fs.createReadStream(song).pipe(new lame.Decoder).pipe(speaker);
 				socket.emit('currentTrack', path.basename(playlist[i]));
-				i++;
 				speaker.on('close', function(){
 					done();
 				});
@@ -129,8 +137,8 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('stopPlaylist', function(){
-		halt = true;
-		speaker.end();
+		console.log("Stopping playback...");
+		stop();
 	});
 	
 	socket.on('getCurrentList', function(){
@@ -154,6 +162,30 @@ io.sockets.on('connection', function (socket) {
 	socket.on('addSong', function(songNum){
 		setlist.push(mp3list[songNum]);
 		socket.emit('directoryList', mp3list);
+	});
+	
+	socket.on('skipForward', function(){
+		currentStream.end();
+		speaker.end();
+		console.log("Yeees?...");
+	});
+	
+	socket.on('skipBack', function(){
+		if(i > 0){
+			i--;
+		}
+	});
+	
+	socket.on('turnUp', function(){
+		volume+=5;
+		console.log(volume);
+		child_process.exec('amixer -D default cset numid=5 '+volume+'%');
+	});
+	
+	socket.on('turnDown', function(){
+		volume-=5;
+		console.log(volume);
+		child_process.exec('amixer -D default cset numid=5 '+volume+'%');
 	});
 	
 	socket.on('loadDrive', function(){
