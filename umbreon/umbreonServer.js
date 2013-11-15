@@ -130,6 +130,7 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('stopPlaylist', function(){
 		halt = true;
+		speaker.end();
 	});
 	
 	socket.on('getCurrentList', function(){

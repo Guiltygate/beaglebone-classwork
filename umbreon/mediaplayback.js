@@ -42,10 +42,6 @@ function connect(){
 			$('#currentTrack').replaceWith("<h2 id='currentTrack' align='right'>"+currentTrack+"</h2>")
 		});
 		
-		socket.on('download', function(line){
-			$('#download').replaceWith(line);
-		});
-		
 		
 		firstconnect = false;
 	}else{
