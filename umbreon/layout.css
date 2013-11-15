@@ -12,7 +12,7 @@ h1 {text-align:center;}
 
 
 
-body { background-color:#404040;}
+body { background-color:#101010;}
 
 .select { 
 background-color:FFD700; 
@@ -50,4 +50,5 @@ background-color:FFD700;
 #page-wrap {
      width: 700px;
      margin: 0 auto;
+     background-color:#404040;
 }
