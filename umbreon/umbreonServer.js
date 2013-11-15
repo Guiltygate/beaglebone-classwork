@@ -44,7 +44,8 @@ function readDirectory(){
 	dirfiles = fs.readdirSync(mountpath + '.');
 
 	dirfiles.forEach(function(file){
-		if(path.extname(file) === '.mp3'){
+		var ex = path.extname(file);
+		if(ex === '.mp3'){
 			mp3list.push(file);
 		}
 	});	
