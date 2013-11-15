@@ -1,17 +1,49 @@
-body {
-  font-family: sans-serif;
-  font-size: 16px;
-  margin: 25px;
-  max-width: 650px;
+div {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 }
 
-#slider1 { margin: 10px; width: 275px; 
-	text-align:center; 
-	position:relative;
-	right: 0px;
-	top:   0px;
+#header{
+	background-color:#daa520;
 }
 
-#setup {
-	font-size: 10px;
+h1 {text-align:center;}
+
+
+
+body { background-color:#404040;}
+
+.select { 
+background-color:FFD700; 
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+#currentlist{float:	right;}
+
+#image{
+	float: center;
+}
+
+#control{
+    background-color:#daa520;
+    float: center;
+    width: 340px;
+}
+
+.golden{
+    background-color:#daa520;
+}
+
+#currentTrack{text-align:center;}
+
+#tracklist{
+	background-color:#daa520;
+}
+
+#page-wrap {
+     width: 700px;
+     margin: 0 auto;
 }

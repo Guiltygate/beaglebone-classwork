@@ -1,50 +1,58 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Umbreon Media Controller</title>
-    <link rel="shortcut icon" href="/fav.ico">
-	
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="mediaplayback.js"></script>
-    <script src="jquery.js"></script>
-    <script src="dropzone.js"></script>
+	<head>
+		<title>Umbreon Media Controller</title>
+		<link rel="shortcut icon" href="/fav.ico">
+		<link href="layout.css" rel="stylesheet" type="text/css">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="mediaplayback.js"></script>
+		<script src="jquery.js"></script>
+		<script src="dropzone.js"></script>
+	</head>
+	<body>
+		<div id='page-wrap'>
+			<div class='golden' id='header'><h1>Umbreon Media Center</h1></div>
 
-    <h1>Umbreon Media Center</h1>
-    <a href="http://eLinux.org/ECE497_Project_Music_Controller" 
-target="_blank">
-        <img src="uLogo.jpg" width=350 align="right"></a>
-    <i>By Eric Ames</i>
-    <p/>       	
-       	<img src="back.png" width=85 >
-       	<img src="play.png" width=125 onClick='play()'>
-		<img src="forward.png" width=85 onClick='skipForward()'>
-    <p/>
-    <p>
-        <img src="plus.png" width=85 onClick='getDirectory()'>
-        <img src="stop.png" width=125 onClick='stopPlaylist()'>
-        <img src="minus.png" width=85 onClick='getPlayList()'>
-    </p>
-    <p>
-       	<button id="load" onClick='loadDrive()'>Load Media</button>
-       	<button id='up' onClick='turnUp()'>Sound +</button>
-       	<button id='down' onClick='turnDown()'>Sound -</button>
-    </p>
-	
-	<h2 id='currentTrack' align='right'></h2>
-	
-	<table id="currentlist">
-	</table>
-	
-	<p></p>
-    <a href="http://Rose-Hulman.edu" target="_blank">
-        <img src="RoseLogo96.png" width=200></a>
-    <br/>
-    <p/>
+			<a href="http://eLinux.org/ECE497_Project_Music_Controller" 
+			target="_blank">
+			<!--<img src="uLogo.jpg" width=350 align="right">--></a>
+			<i>By Eric Ames</i>
 
+			<div class='golden' id='playlist'>
+				<table id="currentlist"></table>
+			</div>
+
+			<div class='golden' id='control' align='center'>
+				<p>
+					<img src="back.png" width=85 >
+					<img src="play.png" width=125 onClick='play()'>
+					<img src="forward.png" width=85 onClick='skipForward()'>
+				</p><p>
+					<img src="plus.png" width=85 onClick='getDirectory()' align='center'>
+					<img src="stop.png" width=125 onClick='stopPlaylist()' align='center'>
+					<img src="minus.png" width=85 onClick='getPlayList()' align='center'>
+				</p>
+			</div>
+			
+			<p>
+				<button id="load" onClick='loadDrive()'>Load Media</button>
+				<button id='up' onClick='turnUp()'>Sound +</button>
+				<button id='down' onClick='turnDown()'>Sound -</button>
+			</p>
+
+			<div class='golden' id='tracklist'>
+				<h2 id='currentTrack' align='center'></h2>
+			</div>
+
+			<br/>
+			<br/>
+			<a href="http://Rose-Hulman.edu" target="_blank">
+			<img src="RoseLogo96.png" width=200></a>
+			<br/>
+
+		</div>
+		<div class='golden'>
 	</body>
 </html>
 
