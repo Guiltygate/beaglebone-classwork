@@ -21,7 +21,11 @@ background-color:FFD700;
     border-radius: 10px;
 }
 
-#currentlist{float:	right;}
+#currentlist{float:	right; background-color:#daa520
+
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;}
 
 #image{
 	float: center;
