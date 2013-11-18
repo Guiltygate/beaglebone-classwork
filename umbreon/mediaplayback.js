@@ -87,6 +87,10 @@ function stopPlaylist(){
 	socket.emit('stopPlaylist');
 }
 
+function ejectDrive(){
+	socket.emit('ejectDrive');
+}
+
 function removeSong(songNum){
 	socket.emit('removeSong', songNum);
 }
