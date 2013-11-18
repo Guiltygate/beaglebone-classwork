@@ -15,7 +15,8 @@ var express = require('express'),
 	firstplay = true;
 	i=0,
 	volume = 30,
-	name = 'bugger';
+	name = 'bugger',
+	playing = false;
 	
 	
 var mountpath = '/mnt/server_media/';
@@ -116,9 +117,10 @@ io.sockets.on('connection', function (socket) {
 	//Big thanks to TooTallNate of the nodejs community, your modules are pretty badass.
     socket.on('playCurrentList', function(){
 		setPlaylist();
-		if(playlist.length === 0){
+		if(playlist.length === 0 || playing){
     		return;
     	}
+    		playing = true;
 		
 		console.log("Beginning playback...");
 		halt = false;
@@ -135,6 +137,7 @@ io.sockets.on('connection', function (socket) {
 				});
 			}
 		});
+		playing = false;
 	});
 	
 	socket.on('stopPlaylist', function(){
