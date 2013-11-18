@@ -199,6 +199,13 @@ io.sockets.on('connection', function (socket) {
 		setlist = [];
 	});
 	
+	socket.on('ejectDrive', function(){
+	console.log("Ejecting drive...");
+		child_process.exec('umount /mnt/server_media');
+		mp3list = [],
+		setlist = [];
+	});
+	
 	socket.on('giveName', function(newName){
 		name = newName;
 	});
