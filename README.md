@@ -1,4 +1,4 @@
 beaglebone-classwork
 ====================
 
-Contains work done for ECE497, primarily for the Beaglebone Black.
+Contains Music Server files and ECE497 classwork.
